@@ -1,13 +1,13 @@
 'use strict';
-var mongoose = require('mongoose');
-var Schema   = mongoose.Schema;
+class location
+{
+    constructor(street, number, city, lat, lon){
+        this.street = street;
+        this.number - number;
+        this.city = city;
+        this.latitude = lat;
+        this.longtitude = lon;
+    }
 
-var Location = new Schema({
-    street: String,
-    number: String,
-    city: String,
-    lat: Number,
-    lng: Number
-});
-
-module.exports = Location;
+}
+module.exports = location;
