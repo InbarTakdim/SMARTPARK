@@ -54,6 +54,25 @@ app.post('/searchParking/'
 
 });
 
+// app.get('/setParking/:parking_id/:searcher_id'
+//     , function(req,res){
+//     var reporterId = req.params.reporter_id;
+//     var time = req.params.time;
+//     var street = req.params.street;
+//     var number = req.params.number;
+//     var city = req.params.city;
+//     var img = req.params.img;
+//     var lat = req.params.lat;
+//     var lng = req.params.lng;
+//     var description = req.params.description;
+//     parkingsApi.addParking(reporterId, time, street,
+//     number, city, lat, lng, img, description , res);
+//     console.log("finish rout");
+
+// });
 
 http.createServer(app).listen(port);
 console.log("server is running on port " + port + " ...");
+
+
+
