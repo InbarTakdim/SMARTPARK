@@ -10,7 +10,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.15.2",
+    "body-parser": "^1.17.1",
+    "express": "^3.21.2",
     "http": "0.0.0",
     "mongoose": "^4.9.2",
     "shortid": "^2.2.8"

@@ -3,6 +3,7 @@ var ParkingsController = require('./controllers/parkingCtrl.js');
 var parkingsApi = new ParkingsController();
 var port = process.env.PORT ||8080;
 var express=require('express');
+var bodyParser=require('body-parser');
 var app=express();
 var http= require('http');
 
@@ -14,30 +15,36 @@ app.all('*', function(req, res, next) {
   next();
 });
 */
-
-app.get('/addNewParking/:reporter_id/:time/:street/:number/:city/:lat/:lng/:img/:description'
+//app.use(bodyParser.json());
+//app.use(bodyParser.urlencoded({extended:true}));
+app.use(express.bodyParser());
+app.use( bodyParser.json() );       // to support JSON-encoded bodies
+app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
+  extended: false
+})); 
+app.post('/addNewParking/'
     , function(req,res){
-    var reporterId = req.params.reporter_id;
-    var time = req.params.time;
-    var street = req.params.street;
-    var number = req.params.number;
-    var city = req.params.city;
-    var img = req.params.img;
-    var lat = req.params.lat;
-    var lng = req.params.lng;
-    var description = req.params.description;
+    var reporterId = req.body.reporter_id;
+    var time = req.body.time;
+    var street = req.body.street;
+    var number = req.body.number;
+    var city = req.body.city;
+    var img = req.body.img;
+    var lat = req.body.lat;
+    var lng = req.body.lng;
+    var description = req.body.description;
     parkingsApi.addParking(reporterId, time, street,
     number, city, lat, lng, img, description , res);
     console.log("finish rout");
 
 });
 
-app.get('/searchParking/:time/:lat/:lng/:diff'
+app.post('/searchParking/'
     , function(req,res){
-    var time = req.params.time;
-    var lat = req.params.lat;
-    var lng = req.params.lng;
-    var diff = req.params.diff;
+    var time = req.body.time;
+    var lat = req.body.lat;
+    var lng = req.body.lng;
+    var diff = req.body.diff;
     if(diff < 0 )
     {
       diff = -1*diff;

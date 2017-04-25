@@ -17,6 +17,7 @@ class Parkings
         console.log(" is valid >> "+ isValid);
         if(isValid == null) {
           console.log("validation error !!!");
+          res.setHeader('Content-Type', 'application/json');
           res.send("validtion error") ;
           return false;
         }
@@ -51,16 +52,31 @@ class Parkings
               throw err;
             }
           console.log(" new parking add >> " + +newParking.time);
+          res.setHeader('Content-Type', 'text/javascript');
           res.send("sucess " + newParking);
          });    
     }
 
      searchParking( _time, lat, lng, diff, res){
+
        var before = new Date(_time);
        var after= new Date(_time);
        before.setMinutes(before.getMinutes() - 15);
        after.setMinutes(after.getMinutes() + 15);
        //console.log('before: ' + before + ', after: ' + after);
+
+       //save booking:
+
+
+
+
+
+
+
+
+
+
+       //search:
        Parking.find({ $and: [
         {'location.coord': {
        '$near': [lat , lng], '$maxDistance':diff} } , {'time': {
@@ -75,7 +91,7 @@ class Parkings
           for(var i=0; i<optionalParkings.length; i++)
               optionalParkings[i].time = new Date(optionalParkings[i].time).toLocaleString();
             //console.log(" >>> " + new Date(optionalParkings[i].time));
-          
+          res.setHeader('Content-Type', 'application/json');
           res.send(optionalParkings);
         }); 
      }
