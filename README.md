@@ -7,6 +7,7 @@ path :
 
 https://smartserver1.herokuapp.com/addNewParking/
 
+
 ####you must pass in body request params:
 
 
@@ -34,6 +35,7 @@ path :
 
 https://smartserver1.herokuapp.com/searchParking/
 
+
 ####you must pass in body request params:
 
 
@@ -45,7 +47,9 @@ lng- number
 
 diff- number
 
+
 ##marks:
+
 
 1. time strcture : yyyy-mm-dd%20hh:mm:ss
 
