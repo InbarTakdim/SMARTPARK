@@ -8,7 +8,7 @@ path :
 https://smartserver1.herokuapp.com/addNewParking/
 
 
-####you must pass in body request params:
+#### you must pass in body request params:
 
 
 reporter_id - number
@@ -36,7 +36,7 @@ path :
 https://smartserver1.herokuapp.com/searchParking/
 
 
-####you must pass in body request params:
+#### you must pass in body request params:
 
 
 time- string in format: yyyy-mm-dd%20hh:mm:ss
