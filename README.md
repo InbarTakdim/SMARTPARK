@@ -5,16 +5,47 @@
 
 path :
 
-/addNewParking/:reporter_id/:time/:street/:number/:city/:lat/:lng/:img/:description
+https://smartserver1.herokuapp.com/addNewParking/
+
+####you must pass in body request params:
+
+
+reporter_id - number
+
+time- string in format: yyyy-mm-dd%20hh:mm:ss
+
+street- string
+
+number- number
+
+city- string
+
+lat- number
+
+lng- number
+
+img- string
+
+description- string
 
 ## search:
 
 path :
 
-/searchParking/:time/:lat/:lng/:diff
+https://smartserver1.herokuapp.com/searchParking/
+
+####you must pass in body request params:
 
 
-marks:
+time- string in format: yyyy-mm-dd%20hh:mm:ss
+
+lat- number
+
+lng- number
+
+diff- number
+
+##marks:
 
 1. time strcture : yyyy-mm-dd%20hh:mm:ss
 
