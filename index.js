@@ -54,7 +54,7 @@ app.post('/searchParking/'
    // //var _city = req.body.city;
     //var _lat = req.body.lat;
     //var _lng = req.body.lng;
-    var_location=req.body.location;
+    var _location=req.body.location;
     /*var _location={
          street: _street,
          number: _number,
