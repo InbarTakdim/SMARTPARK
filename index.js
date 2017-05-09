@@ -48,21 +48,21 @@ app.post('/searchParking/'
     var _time = req.body.time;
     var _searcherId=req.body.searcherId;
     var _distance = req.body.distance;
-    var _street = req.body.street;
-    var _number = req.body.number;
-    var _country = req.body.country;
-    var _city = req.body.city;
-    var _lat = req.body.lat;
-    var _lng = req.body.lng;
-
-    var _location={
+    //var _street = req.body.street;
+    //var _number = req.body.number;
+    //var _country = req.body.country;
+   // //var _city = req.body.city;
+    //var _lat = req.body.lat;
+    //var _lng = req.body.lng;
+    var_location=req.body.location;
+    /*var _location={
          street: _street,
          number: _number,
          city: _city,
          country: _country,
          coords: [_lat,_lng]
 
-    };
+    };*/
 
     if(_distance < 0 )
     {
