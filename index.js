@@ -7,11 +7,6 @@ var bodyParser=require('body-parser');
 var app=express();
 var http= require('http');
 
-
-
-
-//app.use(bodyParser.json());
-//app.use(bodyParser.urlencoded({extended:true}));
 app.use(express.bodyParser());
 app.use( bodyParser.json() );       // to support JSON-encoded bodies
 app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
@@ -28,32 +23,53 @@ app.all('*', function(req, res, next) {
 
 app.post('/addNewParking/'
     , function(req,res){
-    var reporterId = req.body.reporter_id;
-    var time = req.body.time;
-    var street = req.body.street;
-    var number = req.body.number;
-    var city = req.body.city;
-    var img = req.body.img;
-    var lat = req.body.lat;
-    var lng = req.body.lng;
-    var description = req.body.description;
-    parkingsApi.addParking(reporterId, time, street,
-    number, city, lat, lng, img, description , res);
-    console.log("finish rout");
+    var _publisherId = req.body.publisherId ;
+    var _time = req.body.time;
+    var _street = req.body.street;
+    var _number = req.body.number;
+    var _country = req.body.country;
+    var _city = req.body.city;
+    var _lat = req.body.lat;
+    var _lng = req.body.lng;
+    var _description = req.body.description;
+    var _img = req.body.img;
+    var _size = req.body.size;
+    var _handicapped = req.body.handicapped;
+    var _status = req.body.status;
 
+
+
+    parkingsApi.addParking(_publisherId , _time, _street, _number, _city,_country, _lat, _lng, _img, _description, _handicapped, _size, _status,res)
+    console.log("finish rout");
 });
 
 app.post('/searchParking/'
     , function(req,res){
-    var time = req.body.time;
-    var lat = req.body.lat;
-    var lng = req.body.lng;
-    var diff = req.body.diff;
-    if(diff < 0 )
+    var _time = req.body.time;
+    var _searcherId=req.body.searcherId;
+    var _distance = req.body.distance;
+    var _street = req.body.street;
+    var _number = req.body.number;
+    var _country = req.body.country;
+    var _city = req.body.city;
+    var _lat = req.body.lat;
+    var _lng = req.body.lng;
+
+    var _location={
+         street: _street,
+         number: _number,
+         city: _city,
+         country: _country,
+         coords: [_lat,_lng]
+
+    };
+
+    if(_distance < 0 )
     {
-      diff = -1*diff;
+      _distance = -1*_distance;
     }
-    parkingsApi.searchParking( time, lat, lng, diff, res);
+    
+    parkingsApi.searchParking(_searcherId, _time, _location, _distance, res);
     console.log("finish rout");
 
 });
