@@ -4,7 +4,8 @@ var Parking = require('../models/parking');
 var Booking = require('../models/booking');
 var Location = require('../models/location');
 var shortId=require('shortid');
-var dateFormat = /(19|20)\d\d-(0[1-9]|1[012])-([012]\d|3[01]) ([01]\d|2[0-3]):([0-5]\d):([0-5]\d)$/;
+var _ = require('lodash');
+// var dateFormat = /(19|20)\d\d-(0[1-9]|1[012])-([012]\d|3[01]) ([01]\d|2[0-3]):([0-5]\d):([0-5]\d)$/;
 
 class Parkings
 {
@@ -15,8 +16,7 @@ class Parkings
       var isValid = _time.match(dateFormat);
       console.log(" is valid >> "+ isValid);
       if(isValid == null) {
-        console.log("validation error !!!");
-        res.send("validtion error") ;
+        console.log("date validation error !!!");
         return false;
         }
 
@@ -69,6 +69,13 @@ class Parkings
 
     searchParking(_searcherId, _time, _location, _distance, res)
     {
+      // _time.d = (_.split(_time.d, 'T', 2))[0];
+      // _time.t = (_.split(_time.t, 'T', 2))[1];
+      // _time = _time.d + ' ' + _time.t;
+
+
+
+
        var before = new Date(_time);
        var after= new Date(_time);
        before.setMinutes(before.getMinutes() - 15);
@@ -78,14 +85,14 @@ class Parkings
        var _city= _location.city;
        var _number= parseInt(_location.number);
        var _street= _location.street;
-       var _lat=parseInt(_location.coords[0]);
-       var _lng= parseInt(_location.coords[1]);
+       var _lat=parseFloat(_location.coords[0]);
+       var _lng= parseFloat(_location.coords[1]);
 
-       var checkValidation= this.validation(_lat, _lng, _time);
-        if(!checkValidation){
-          console.log("validation error!!!!!!!!!!!!!");
-          return false;
-        }
+       // var checkValidation= this.validation(_lat, _lng, _time);
+       //  if(!checkValidation){
+       //    console.log("validation error!!!!!!!!!!!!!");
+       //    return false;
+       //  }
 
        //save booking:
        var tmpDate = new Date(_time);
@@ -109,7 +116,7 @@ class Parkings
             console.log(" >>ERROR in save booking: " +err);
             handleError(res, err);
           }
-          console.log(" new parking add >> " + newBooking.time);
+          console.log(" new booking added >> " + newBooking.time);
          });    
          
 
