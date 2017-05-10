@@ -12,7 +12,7 @@ var parkingSchema = new Schema({
     occupied:{type: Boolean},
     location:{
         street: {type: String},
-        number: {type: Number},
+        number: {type: String},
         city: {type: String},
         country: {type: String},
         coords: {type: [Number] , index: '2d'} 
