@@ -8,21 +8,20 @@ var connection = mongoose.createConnection('mongodb://db_usr:db_pass@ds129030.ml
                                     
 var parkingSchema = new Schema({
     id:{type: String , required: true , unique: true},
-    time:{type:Date},
-    status: {type:String},
+    time:{type: Date},
     occupied:{type: Boolean},
     location:{
         street: {type: String},
-        number: {type:Number},
-        city: {type:String},
-        country: {type:String},
-        coords: {type:[Number] , index: '2d'} 
+        number: {type: Number},
+        city: {type: String},
+        country: {type: String},
+        coords: {type: [Number] , index: '2d'} 
     },
-    handicapped:{type:Boolean},
-    description:{type: String},
+    handicapped: {type: Boolean},
+    description: {type: String},
     img: {type: String},
-    size: {type:String , enum:['Length parking', 'small', 'medium', 'large']},
-    publisherId:{type: String}
+    size: {type: Number},
+    publisherId: {type: String}
 }, {collection : 'parkings'});
 
 module.exports = connection.model('parking', parkingSchema);

@@ -38,12 +38,12 @@ app.post('/addNewParking/'
     , function(req,res){
     var _publisherId = req.body.publisherId ;
     var _time = req.body.time;
-    var _street = req.body.street;
-    var _number = req.body.number;
-    var _country = req.body.country;
-    var _city = req.body.city;
-    var _lat = req.body.lat;
-    var _lng = req.body.lng;
+    var _street = req.body.location.street;
+    var _number = req.body.location.number;
+    var _country = req.body.location.country;
+    var _city = req.body.location.city;
+    var _lat = req.body.location.lat;
+    var _lng = req.body.location.lng;
     var _description = req.body.description;
     var _img = req.body.img;
     var _size = req.body.size;

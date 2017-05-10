@@ -31,11 +31,12 @@ class Parkings
     addParking(_publisherId , _time, _street, _number, _city,_country, lat, lng, _img, _description, _handicapped, _size, _status,res)
     {   console.log(' >> addParking');
         // _time validation : 
-        var checkValidation= this.validation(lat, lng, _time);
+        /*var checkValidation= this.validation(lat, lng, _time);
         if(!checkValidation){
           console.log("validation error!!!!!!!!!!!!!");
           return false;
         }
+        */
        
         var tmpDate = new Date(_time);
         var newParking = new Parking({
@@ -63,7 +64,7 @@ class Parkings
             handleError(res, err);
           }
           console.log(" new parking add >> " + +newParking.time);
-          res.send("sucess " + newParking);
+          res.json(newParking);
          });    
     }
 
