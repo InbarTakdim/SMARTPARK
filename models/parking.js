@@ -15,7 +15,7 @@ var parkingSchema = new Schema({
         number: {type: String},
         city: {type: String},
         country: {type: String},
-        coords: {type: [Number] , index: '2d'} 
+        coords: {type: [Number] , spherical: true } 
     },
     handicapped: {type: Boolean},
     description: {type: String},

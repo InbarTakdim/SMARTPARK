@@ -5,7 +5,7 @@ var Booking = require('../models/booking');
 var Location = require('../models/location');
 var shortId=require('shortid');
 var _ = require('lodash');
-// var dateFormat = /(19|20)\d\d-(0[1-9]|1[012])-([012]\d|3[01]) ([01]\d|2[0-3]):([0-5]\d):([0-5]\d)$/;
+ var dateFormat = /(19|20)\d\d-([1-9]|1[012])-(0[1-9]|[1-9]|1[0-9]|2[0-9]|3[01]) (0[1-9]|[0-9]|[1]\d|2[0-3]):([0-5]\d):([0-5]\d)$/;
 
 class Parkings
 {
@@ -29,16 +29,17 @@ class Parkings
     }
 
     addParking(_publisherId , _time, _street, _number, _city,_country, lat, lng, _img, _description, _handicapped, _size, _status,res)
-    {   console.log(' >> addParking');
+    {   console.log(' >> addParking : ' +_time);
+       // _time='2017-02-12 12:50:00'
+       // console.log("after chenge "+ _time);
         // _time validation : 
-        /*var checkValidation= this.validation(lat, lng, _time);
+        var checkValidation= this.validation(lat, lng, _time);
         if(!checkValidation){
           console.log("validation error!!!!!!!!!!!!!");
           return false;
         }
-        */
-       
         var tmpDate = new Date(_time);
+         console.log("after date constrctur "+ tmpDate);
         var newParking = new Parking({
           id: shortId.generate(),
           time: tmpDate, 
@@ -70,31 +71,25 @@ class Parkings
 
     searchParking(_searcherId, _time, _location, _distance, res)
     {
-      // _time.d = (_.split(_time.d, 'T', 2))[0];
-      // _time.t = (_.split(_time.t, 'T', 2))[1];
-      // _time = _time.d + ' ' + _time.t;
-
-
-
-
+       console.log(' >> searchParking : ' +_time);
+       // _time validation : 
        var before = new Date(_time);
        var after= new Date(_time);
        before.setMinutes(before.getMinutes() - 15);
        after.setMinutes(after.getMinutes() + 15);
-       //console.log('before: ' + before + ', after: ' + after);
        var _country= _location.country;
        var _city= _location.city;
        var _number= parseInt(_location.number);
        var _street= _location.street;
        var _lat=parseFloat(_location.coords[0]);
        var _lng= parseFloat(_location.coords[1]);
+       _distance=parseFloat(_distance);
 
-       // var checkValidation= this.validation(_lat, _lng, _time);
-       //  if(!checkValidation){
-       //    console.log("validation error!!!!!!!!!!!!!");
-       //    return false;
-       //  }
-
+        var checkValidation= this.validation(_lat, _lng, _time);
+        if(!checkValidation){
+          console.log("validation error!!!!!!!!!!!!!");
+          return false;
+        }
        //save booking:
        var tmpDate = new Date(_time);
        var newBooking= new Booking({
@@ -119,33 +114,126 @@ class Parkings
           }
           console.log(" new booking added >> " + newBooking.time);
          });    
-         
-
        //search:
-       console.log("-------------------here---------------------------------");
+       _distance=_distance/6371; //convert km to radians
+       // console.log(" After convert km to radians distance is : "+ _distance );
         Parking.find({ $and: [
-        {'location.coords': {
-       '$near': [_lat ,_lng], '$maxDistance':_distance} } , {'time': {
-       '$lt': +after , '$gte':+before} } , {'occupied':false} ]}, function (err, optionalParkings){
+        {'location.coords': { $geoWithin: { $centerSphere: [ [ _lat, _lng ], _distance] } }}
+       , {'time': {
+       '$lt': +after , '$gte':+before} }
+        ,
+        {'occupied':false} ]}, function (err, optionalParkings){
           if(err) {
             console.log("ERROR in find>> "+ err);
             throw err;
           }
-          //console.log('1: ' + typeof optionalParkings);
           var optionalParkings =JSON.parse(JSON.stringify(optionalParkings));
-         // console.log('2: ' + typeof optionalParkings);
           for(var i=0; i<optionalParkings.length; i++)
               optionalParkings[i].time = new Date(optionalParkings[i].time).toLocaleString();
-            //console.log(" >>> " + new Date(optionalParkings[i].time));
-          //res.setHeader('Content-Type', 'application/json');
           var jsonRes={
             bookingId: newBooking.id,
             results:optionalParkings 
           };
-          
+          console.log("in search res is :"+jsonRes.results.length);
+          console.log(jsonRes.results[0]);
           res.send(jsonRes);
         }); 
      }
+
+     chooseParking(parkingId , searcherId , bookingId, res){
+        Parking.update(
+         { 'id': parkingId },
+         { $set: {'occupied': true}},{multi: false},
+            function(err , parks){
+              if(err){
+                  console.log("error in parking update~~");
+                  res.send("error in parking update~~");
+                }
+              console.log("parking updatede!");
+              Booking.update(
+                 {'id': bookingId },
+                 {$set: {'searcherId': searcherId,
+                          'parkingId':parkingId }},{multi: false},
+                          function(err, books){
+                            if(err){
+                              console.log("error in booking update~~");
+                              res.send("error in booking update~~");
+                            }
+                            var jsonRes={
+                              booking: books,
+                              parking:parks 
+                            };
+
+                            res.send(jsonRes);}
+               );
+            }
+        );                
+      }
+
+
+      cancleChooseParking(parkingId ,  bookingId, res){
+        Parking.update(
+         { 'id': parkingId },
+         { $set: {'occupied': false}},{multi: false},
+            function(err , parks){
+              if(err){
+                  console.log("error in parking update~~");
+                  res.send("error in parking update~~");
+                }
+              console.log("parking updatede!");
+              Booking.update(
+                 {'id': bookingId },
+                 {$set: {'searcherId': null,
+                          'parkingId':null }},{multi: false},
+                          function(err, books){
+                            if(err){
+                              console.log("error in booking update~~");
+                              res.send("error in booking update~~");
+                            }
+                            var jsonRes={
+                              booking: books,
+                              parking:parks 
+                            };
+
+                            res.send(jsonRes);}
+               );
+            }
+        );           
+      }
+
+      deleteBooking(bookingId, res){
+       Booking.findOneAndRemove({'id':bookingId }, function(err){if(err){
+            console.log("error in delete!");
+            res.send('error in delete');
+          }
+          res.send("ssuccess in delete");
+        });
+      }
+
+      deleteParking(parkingId, res){
+       Parking.findOneAndRemove({'id':parkingId }, function(err){if(err){
+            console.log("error in delete!");
+            res.send('error in delete');
+          }
+          res.send("ssuccess in delete");
+        });
+      }
+
+      historyBooking(userId , res){
+        Booking.find({'searcherId' : userId}).sort('-time').exec(function(err, docs) {if(err)res.send("error"); else res.send(docs) });
+
+      }
+
+      historyParking(userId , res){
+        Parking.find({'publisherId' : userId}).sort('-time').exec(function(err, docs) {if(err)res.send("error"); else res.send(docs) });
+
+      }
+
+
+
+
+
+
 }
 
 module.exports = Parkings;

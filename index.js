@@ -56,45 +56,21 @@ app.post('/addNewParking/'
     console.log("finish rout");
 });
 
-// app.post('/searchParking/'
-//     , function(req,res){
-//     // var _time = req.body.time;
-//     // var _searcherId=req.body.searcherId;
-//     // var _distance = req.body.distance;
-//     //var _street = req.body.street;
-//     //var _number = req.body.number;
-//     //var _country = req.body.country;
-//    // //var _city = req.body.city;
-//     //var _lat = req.body.lat;
-//     //var _lng = req.body.lng;
-//     // var _location=req.body.location;
-//     /*var _location={
-//          street: _street,
-//          number: _number,
-//          city: _city,
-//          country: _country,
-//          coords: [_lat,_lng]
-
-//     };*/
-
-//     // if(_distance < 0 )
-//     // {
-//     //   _distance = -1*_distance;
-//     // }
-    
-//     // parkingsApi.searchParking(_searcherId, _time, _location, _distance, res);
-//     // console.log("finish rout");
-//     // console.log(req.params);
-// });
-
-
 app.post('/searchParking/'
     , function(req,res){
     console.log("in search >> " +req.body);
     var _time = req.body.time;
     var _searcherId = req.body.searcherId;
-    var _distance = (_.words(req.body.distance))[0];
+   
+    var _distance = req.body.distance;
+    console.log("distance is :::::::::::::::::::: "+ _distance)
     console.log(_distance);
+    _distance= _distance.trim();
+    _distance=parseFloat(_distance.split(" ")[0]);
+
+    console.log("distance is after split: "+ _distance)
+    console.log(_distance);
+
     var _street = req.body.location.street;
     var _number = req.body.location.number;
     var _country = req.body.location.country;
@@ -113,26 +89,72 @@ app.post('/searchParking/'
     {
       _distance = -1*_distance;
     }
-    parkingsApi.searchParking(_searcherId, _time, _location, _distance, res);
-    console.log("finish rout");
+
+   console.log("in routing distance is : "+ _distance);
+   parkingsApi.searchParking(_searcherId, _time, _location, _distance, res);
+   console.log("finish rout");
 });
 
-// app.get('/setParking/:parking_id/:searcher_id'
-//     , function(req,res){
-//     var reporterId = req.params.reporter_id;
-//     var time = req.params.time;
-//     var street = req.params.street;
-//     var number = req.params.number;
-//     var city = req.params.city;
-//     var img = req.params.img;
-//     var lat = req.params.lat;
-//     var lng = req.params.lng;
-//     var description = req.params.description;
-//     parkingsApi.addParking(reporterId, time, street,
-//     number, city, lat, lng, img, description , res);
-//     console.log("finish rout");
+ app.get('/chooseParking/'
+     , function(req,res){
 
-// });
+    var searcher_id=req.body.searcherId;
+    var parking_id=req.body.parkingId;
+    var booking_id=req.body.bookingId;
+    parkingsApi.chooseParking(parking_id, searcher_id , booking_id, res);
+    console.log("finish rout");
+
+ });
+
+  app.get('/cancleParking/'
+     , function(req,res){
+
+    var parking_id=req.body.parkingId;
+    var booking_id=req.body.bookingId;
+    parkingsApi.cancleChooseParking(parking_id,  booking_id, res);
+    console.log("finish rout");
+
+ });
+
+  app.get('/deleteParking/'
+     , function(req,res){
+
+    var parking_id=req.body.parkingId;
+  
+    parkingsApi.deleteParking(parking_id, res);
+    console.log("finish rout");
+
+ });
+
+    app.get('/deleteBooking/'
+     , function(req,res){
+
+    var booking_id=req.body.bookingId;
+  
+    parkingsApi.deleteBooking(booking_id, res);
+    console.log("finish rout");
+
+ });
+
+    app.get('/historyBooking/'
+     , function(req,res){
+
+    var user_id=req.body.userId;
+  
+    parkingsApi.historyBooking(user_id, res);
+    console.log("finish rout");
+
+ });
+
+    app.get('/historyParking/'
+     , function(req,res){
+
+    var user_id=req.body.userId;
+  
+    parkingsApi.historyParking(user_id, res);
+    console.log("finish rout");
+
+ });
 
 http.createServer(app).listen(port);
 console.log("server is running on port " + port + " ...");
