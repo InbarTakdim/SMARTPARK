@@ -1,6 +1,8 @@
 'use strict';
 var ParkingsController = require('./controllers/parkingCtrl.js');
+var db = require('./dbconf');
 var parkingsApi = new ParkingsController();
+var userMDL = require('./controllers/userMDL.js');
 var port = process.env.PORT ||8080;
 var express=require('express');
 var bodyParser=require('body-parser');
@@ -32,7 +34,7 @@ app.use(function(req,res,next){
 // app.use( bodyParser.json() );       // to support JSON-encoded bodies
 // app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
 //   extended: true
-// })); 
+// }));
 
 app.post('/addNewParking/'
     , function(req,res){
@@ -61,7 +63,7 @@ app.post('/searchParking/'
     console.log("in search >> " +req.body);
     var _time = req.body.time;
     var _searcherId = req.body.searcherId;
-   
+
     var _distance = req.body.distance;
     console.log("distance is :::::::::::::::::::: "+ _distance)
     console.log(_distance);
@@ -120,7 +122,7 @@ app.post('/searchParking/'
      , function(req,res){
 
     var parking_id=req.body.parkingId;
-  
+
     parkingsApi.deleteParking(parking_id, res);
     console.log("finish rout");
 
@@ -130,7 +132,7 @@ app.post('/searchParking/'
      , function(req,res){
 
     var booking_id=req.body.bookingId;
-  
+
     parkingsApi.deleteBooking(booking_id, res);
     console.log("finish rout");
 
@@ -140,7 +142,7 @@ app.post('/searchParking/'
      , function(req,res){
 
     var user_id=req.body.userId;
-  
+
     parkingsApi.historyBooking(user_id, res);
     console.log("finish rout");
 
@@ -150,14 +152,16 @@ app.post('/searchParking/'
      , function(req,res){
 
     var user_id=req.body.userId;
-  
+
     parkingsApi.historyParking(user_id, res);
     console.log("finish rout");
 
  });
+  app.post('/createUser', userMDL.createUser);
+  app.post('/updateUser', userMDL.updateUser);
+  app.get('/readUser/:userId', userMDL.readUser);
+  app.get('/deleteUser/:userId', userMDL.deleteUser);
+
 
 http.createServer(app).listen(port);
 console.log("server is running on port " + port + " ...");
-
-
-
