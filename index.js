@@ -95,7 +95,7 @@ app.post('/searchParking/'
    console.log("finish rout");
 });
 
- app.get('/chooseParking/'
+ app.post('/chooseParking/'
      , function(req,res){
 
     var searcher_id=req.body.searcherId;
@@ -106,7 +106,7 @@ app.post('/searchParking/'
 
  });
 
-  app.get('/cancleParking/'
+  app.post('/cancleParking/'
      , function(req,res){
 
     var parking_id=req.body.parkingId;
@@ -116,7 +116,7 @@ app.post('/searchParking/'
 
  });
 
-  app.get('/deleteParking/'
+  app.post('/deleteParking/'
      , function(req,res){
 
     var parking_id=req.body.parkingId;
@@ -126,7 +126,7 @@ app.post('/searchParking/'
 
  });
 
-    app.get('/deleteBooking/'
+    app.post('/deleteBooking/'
      , function(req,res){
 
     var booking_id=req.body.bookingId;
@@ -136,7 +136,7 @@ app.post('/searchParking/'
 
  });
 
-    app.get('/historyBooking/'
+    app.post('/historyBooking/'
      , function(req,res){
 
     var user_id=req.body.userId;
@@ -146,7 +146,7 @@ app.post('/searchParking/'
 
  });
 
-    app.get('/historyParking/'
+    app.post('/historyParking/'
      , function(req,res){
 
     var user_id=req.body.userId;
