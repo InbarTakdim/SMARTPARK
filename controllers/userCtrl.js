@@ -1,3 +1,4 @@
+'use strict';
 //DB schema:
 var data = require('../models/user');
 

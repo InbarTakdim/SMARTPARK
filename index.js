@@ -1,6 +1,6 @@
 'use strict';
-var ParkingsController = require('./controllers/parkingMDL.js'),
-	userMDL = require('./controllers/userMDL.js'),
+var ParkingsController = require('./controllers/parkingCtrl.js'),
+	userMDL = require('./controllers/userCtrl.js'),
 	db = require('./dbconf'),
 	parkingsApi = new ParkingsController(),
 	port = process.env.PORT || 8080,
