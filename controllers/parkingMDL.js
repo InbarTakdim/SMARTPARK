@@ -195,7 +195,7 @@ class Parkings {
 	}
 
 
-	cancleChooseParking(parkingId, bookingId, res) {
+	cancelChooseParking(parkingId, bookingId, res) {
 		Parking.update({
 				'id': parkingId
 			}, {
