@@ -150,8 +150,8 @@ app.post('/historyParking/', function(req, res) {
 	console.log("finish rout");
 
 });
-app.post('/createUser', userMDL.createUser);
-app.post('/updateUser', userMDL.updateUser);
+app.post('/createuser', userMDL.createUser);
+app.post('/updateuser', userMDL.updateUser);
 app.get('/readUser/:userId', userMDL.readUser);
 app.get('/deleteUser/:userId', userMDL.deleteUser);
 
