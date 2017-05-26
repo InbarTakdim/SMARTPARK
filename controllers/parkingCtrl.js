@@ -183,8 +183,13 @@ class Parkings {
 							res.send("error");
 						}
 
+						var jsonRes = {
+							booking: books,
+							parking: parks
+						};
 
-						res.send("success");
+
+						res.send(jsonRes);
 					}
 				);
 			}
@@ -223,12 +228,12 @@ class Parkings {
 							console.log("error in booking update~~");
 							res.send("error");
 						}
-						/*var jsonRes = {
+						var jsonRes = {
 							booking: books,
 							parking: parks
-						};*/
+						};
 
-						res.send("success");
+						res.send(jsonRes);
 					}
 				);
 			}
