@@ -164,7 +164,7 @@ class Parkings {
 			function(err, parks) {
 				if (err) {
 					console.log("error in parking update~~");
-					res.send("error in parking update~~");
+					res.send("error");
 				}
 				console.log("parking updatede!");
 				Booking.update({
@@ -180,14 +180,11 @@ class Parkings {
 					function(err, books) {
 						if (err) {
 							console.log("error in booking update~~");
-							res.send("error in booking update~~");
+							res.send("error");
 						}
-						var jsonRes = {
-							booking: books,
-							parking: parks
-						};
 
-						res.send(jsonRes);
+
+						res.send("success");
 					}
 				);
 			}
@@ -208,7 +205,7 @@ class Parkings {
 			function(err, parks) {
 				if (err) {
 					console.log("error in parking update~~");
-					res.send("error in parking update~~");
+					res.send("error");
 				}
 				console.log("parking updatede!");
 				Booking.update({
@@ -224,14 +221,14 @@ class Parkings {
 					function(err, books) {
 						if (err) {
 							console.log("error in booking update~~");
-							res.send("error in booking update~~");
+							res.send("error");
 						}
-						var jsonRes = {
+						/*var jsonRes = {
 							booking: books,
 							parking: parks
-						};
+						};*/
 
-						res.send(jsonRes);
+						res.send("success");
 					}
 				);
 			}
