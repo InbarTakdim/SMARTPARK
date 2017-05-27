@@ -150,11 +150,12 @@ app.post('/historyParking/', function(req, res) {
 	console.log("finish rout");
 
 });
+
 app.post('/createuser', userMDL.createUser);
 app.post('/updateuser', userMDL.updateUser);
 app.get('/readUser/:userId', userMDL.readUser);
 app.get('/deleteUser/:userId', userMDL.deleteUser);
-
+app.get('/getAll', userMDL.getAll); //NOTE: just for testing DB
 
 http.createServer(app).listen(port);
-console.log("server is running on port " + port + " ...");
+console.log(`server is running on port ${port}...`);

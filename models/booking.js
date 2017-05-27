@@ -1,24 +1,32 @@
-'use strict';
-var mongoose = require('mongoose');
-var Schema   = mongoose.Schema;
-mongoose.Promise = global.Promise;
+//Schema for Data collection on DB
+var mongoose = require('mongoose'),
+	schema = mongoose.Schema;
 
+var bookingSchema = new schema({
+	id: {
+		type: String,
+		required: true,
+		unique: true
+	},
+	time: Date,
+	distance: Number,
+	location: {
+		street: String,
+		number: Number,
+		city: String,
+		country: String,
+		coords: {
+			type: [Number],
+			index: '2d'
+		}
+	},
+	searcherId: String,
+	parkingId: String
+}, {
+	collection: 'bookings',
+	versionKey: false
+});
 
-var connection1 = mongoose.createConnection('mongodb://db_usr:db_pass@ds131099.mlab.com:31099/bookings1');
-var bookingSchema = new Schema({
-    id:{type: String , required: true , unique: true},
-    time:{type:Date},
-    distance:{type: Number},  
-    location:{
-        street: {type: String},
-        number: {type:Number},
-        city: {type:String},
-        country: {type:String},
-        coords: {type:[Number] , index: '2d'} 
-    },
-    searcherId: {type: String},
-    parkingId: {type: String}
-}, {collection : 'bookings'});
-
-module.exports = connection1.model('booking', bookingSchema);
-
+var model = mongoose.model('booking', bookingSchema);
+console.log('Connected to smartPark.bookings\'s DB...!');
+module.exports = model;

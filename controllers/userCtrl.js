@@ -1,10 +1,16 @@
 'use strict';
 //DB schema:
-var data = require('../models/user');
+var user = require('../models/user'),
+	booking = require('../models/booking'),
+	parking = require('../models/parking');
 
 //Module functions:
 exports.createUser = (req, res) => {
-	data.updateOne({email: req.body.email}, req.body, {upsert: true},
+	user.updateOne({
+			email: req.body.email
+		}, req.body, {
+			upsert: true
+		},
 		(err, obj) => {
 			console.log(req.body.name);
 			if (err) throw err;
@@ -14,7 +20,9 @@ exports.createUser = (req, res) => {
 		});
 };
 exports.readUser = (req, res) => {
-	data.findOne({email: req.params.userId}, {}, (err, obj) => {
+	user.findOne({
+		email: req.params.userId
+	}, {}, (err, obj) => {
 		if (err) throw err;
 		console.log(`${obj} has been found!`);
 		res.json(obj);
@@ -27,16 +35,32 @@ exports.updateUser = (req, res) => {
 		// password: req.body.password,
 		carId: req.body.carId
 	}
-	data.updateOne({email: req.params.userId}, {userInfo}, {upsert: true}, (err, obj) => {
+	user.updateOne({
+		email: req.params.userId
+	}, {
+		userInfo
+	}, {
+		upsert: true
+	}, (err, obj) => {
 		if (err) throw err;
 		console.log(`userId ${req.params.userId} has been updated!`);
 		res.json(obj);
 	});
 };
 exports.deleteUser = (req, res) => {
-	data.deleteOne({email: req.params.userId}, (err, obj) => {
+	user.deleteOne({
+		email: req.params.userId
+	}, (err, obj) => {
 		if (err) throw err;
 		console.log(`${obj} has been deleted!`);
+		res.json(obj);
+	});
+};
+// NOTE: just for testing DB
+exports.getAll = (req, res) => {
+	user.find({}, (err, obj) => {
+		if (err) throw err;
+		console.log(`printing all DB`);
 		res.json(obj);
 	});
 };

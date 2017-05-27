@@ -1,27 +1,35 @@
-'use strict';
-var mongoose = require('mongoose');
-var Schema   = mongoose.Schema;
-mongoose.Promise = global.Promise;
+//Schema for Data collection on DB
+var mongoose = require('mongoose'),
+	schema = mongoose.Schema;
 
-//var connection = mongoose.connect('mongodb://db_usr:db_pass@ds011321.mlab.com:11321/parkings')
-var connection = mongoose.createConnection('mongodb://db_usr:db_pass@ds129030.mlab.com:29030/parkings');
-                                    
-var parkingSchema = new Schema({
-    id:{type: String , required: true , unique: true},
-    time:{type: Date},
-    occupied:{type: Boolean},
-    location:{
-        street: {type: String},
-        number: {type: String},
-        city: {type: String},
-        country: {type: String},
-        coords: {type: [Number] , spherical: true } 
-    },
-    handicapped: {type: Boolean},
-    description: {type: String},
-    img: {type: String},
-    size: {type: Number},
-    publisherId: {type: String}
-}, {collection : 'parkings'});
+var parkingSchema = new schema({
+	id: {
+		type: String,
+		required: true,
+		unique: true
+	},
+	time: Date,
+	occupied: Boolean,
+	location: {
+		street: String,
+		number: String,
+		city: String,
+		country: String,
+		coords: {
+			type: [Number],
+			spherical: true
+		}
+	},
+	handicapped: Boolean,
+	description: String,
+	img: String,
+	size: Number,
+	publisherId: String
+}, {
+	collection: 'parkings',
+	versionKey: false
+});
 
-module.exports = connection.model('parking', parkingSchema);
+var model = mongoose.model('parking', parkingSchema);
+console.log('Connected to smartPark.parkings\'s DB...!');
+module.exports = model;

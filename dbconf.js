@@ -2,7 +2,7 @@
 var mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
 var config = {
-	mongoUrl: 'dbUser:dbUser@ds151431.mlab.com:51431/smartpark'
+	mongoUrl: 'mongodb://db_usr:db_pass@ds155961.mlab.com:55961/smartparkapp'
 }
 console.log('connecting...');
 

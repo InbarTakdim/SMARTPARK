@@ -2,20 +2,23 @@
 var mongoose = require('mongoose'),
 	schema = mongoose.Schema;
 
-var user = new schema ({
-		// id: {type: Number, requierd: true},
-		name: String,
-		email: {type: String, requierd: true},
-		// googleToken: String,
-		password: String,
-		// img: String,
-		smarties: Number,
-		carId: Number
+var user = new schema({
+	// id: {type: Number, requierd: true},
+	name: String,
+	email: {
+		type: String,
+		requierd: true
 	},
-	{
-		collection: 'users'
-	}),
+	// googleToken: String,
+	password: String,
+	// img: String,
+	smarties: Number,
+	carId: Number
+}, {
+	collection: 'users',
+	versionKey: false
+});
 
-	model = mongoose.model('user', user);
+var model = mongoose.model('user', user);
 console.log('Connected to smartPark.users\'s DB...!');
 module.exports = model;
