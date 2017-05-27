@@ -246,9 +246,16 @@ class Parkings {
 		}, function(err) {
 			if (err) {
 				console.log("error in delete!");
-				res.send('error in delete');
+				var ans={
+				name:"error"
+				}
+				res.json(ans);
+
 			}
-			res.send("ssuccess in delete");
+			var ans={
+				name:"success"
+			}
+			res.json(ans);
 		});
 	}
 
@@ -258,9 +265,16 @@ class Parkings {
 		}, function(err) {
 			if (err) {
 				console.log("error in delete!");
-				res.send('error in delete');
+				var ans={
+				name:"error"
+				}
+				res.json(ans);
 			}
-			res.send("ssuccess in delete");
+		var ans={
+				name:"success"
+			}
+			res.json(ans);
+			
 		});
 	}
 
