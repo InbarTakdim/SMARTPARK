@@ -1,11 +1,11 @@
 'use strict';
-var mongoose = require('mongoose');
-var Parking = require('../models/parking');
-var Booking = require('../models/booking');
-var Location = require('../models/location');
-var shortId = require('shortid');
-var _ = require('lodash');
-var dateFormat = /(19|20)\d\d-([1-9]|1[012])-(0[1-9]|[1-9]|1[0-9]|2[0-9]|3[01]) (0[1-9]|[0-9]|[1]\d|2[0-3]):([0-5]\d):([0-5]\d)$/;
+var mongoose 	= require('mongoose'),
+ 	Parking 	= require('../models/parking'),
+	Booking 	= require('../models/booking'),
+	Location 	= require('../models/location'),
+	shortId 	= require('shortid'),
+	_ 			= require('lodash'),
+	dateFormat 	= /(19|20)\d\d-([1-9]|1[012])-(0[1-9]|[1-9]|1[0-9]|2[0-9]|3[01]) (0[1-9]|[0-9]|[1]\d|2[0-3]):([0-5]\d):([0-5]\d)$/;
 
 class Parkings {
 	constructor() {}
@@ -26,7 +26,6 @@ class Parkings {
 		return true;
 	}
 	addParking(req, res) {
-		// addParking(_publisherId, _time, _street, _number, _city, _country, lat, lng, _img, _description, _handicapped, _size, _status, res) {
 		let publisherId 	= req.body.publisherId,
 			time 			= req.body.time,
 			street 			= req.body.location.street,
@@ -69,68 +68,77 @@ class Parkings {
 		};
 
 		Parking.save({newParking}, (err, parking) => {
-			if (err) {
-				console.log(`>>ERROR : ${err}`);
-				handleError(res, err); // NOTE: what this func does?
-			}
-			console.log(`>>new parking added : ${newParking.time}`);
+			if (err) throw err ;
 			res.json(newParking);
 		});
 	}
 
-	searchParking(_searcherId, _time, _location, _distance, res) {
-		console.log(' >> searchParking : ' + _time);
+	searchParking(req, res) {
+		let time 		= req.body.time,
+			searcherId 	= req.body.searcherId,
+			distance 	= req.body.distance,
+			street 		= req.body.location.street,
+			number 		= req.body.location.number,
+			country 	= req.body.location.country,
+			city 		= req.body.location.city,
+			lat 		= req.body.location.lat,
+			lng 		= req.body.location.lng;
+
+		let location = {
+				street: street,
+				number: number,
+				city: city,
+				country: country,
+				coords: [parseFloat(lat), parseFloat(lat)]
+			};
+
+		console.log(`>>in search ${req.body}`);
+		console.log(`>>distance is: ${distance}`)
+		distance 	= distance.trim();
+		distance 	= parseFloat(distance.split(" ")[0]);
+		console.log(`>>distance after split: ${distance}`)
+
+		if (distance < 0)
+			distance = Math.abs(distance);
+
+		console.log(`>>searchParking: ${time}`);
 		// _time validation :
-		var before = new Date(_time);
-		var after = new Date(_time);
+		let before 	= new Date(time),
+			after 	= new Date(time);
+
 		before.setMinutes(before.getMinutes() - 15);
 		after.setMinutes(after.getMinutes() + 15);
-		var _country = _location.country;
-		var _city = _location.city;
-		var _number = parseInt(_location.number);
-		var _street = _location.street;
-		var _lat = parseFloat(_location.coords[0]);
-		var _lng = parseFloat(_location.coords[1]);
-		_distance = parseFloat(_distance);
+		distance = parseFloat(distance);
 
-		var checkValidation = this.validation(_lat, _lng, _time);
+		let checkValidation = this.validation(lat, lng, time);
 		if (!checkValidation) {
-			console.log("validation error!!!!!!!!!!!!!");
+			console.log(">>validation error!");
 			return false;
 		}
 		//save booking:
-		var tmpDate = new Date(_time);
-		var newBooking = new Booking({
-			id: shortId.generate(),
-			time: tmpDate,
-			distance: _distance,
-			location: {
-				street: _street,
-				number: _number,
-				city: _city,
-				country: _country,
-				coords: [_lat, _lng]
-			},
-			searcherId: _searcherId,
-			parkingId: null //null
-		});
+		let	newBooking = {
+				id: shortId.generate(),
+				time: new Date(time),
+				distance: distance,
+				location: location,
+				searcherId: searcherId,
+				parkingId: null //null
+		};
 
-		newBooking.save(function(err, parking) {
-			if (err) {
-				console.log(" >>ERROR in save booking: " + err);
-				handleError(res, err);
-			}
+		Booking.save((err, parking) => {
+			if (err) throw err;
 			console.log(" new booking added >> " + newBooking.time);
 		});
+
 		//search:
-		_distance = _distance / 6371; //convert km to radians
+		distance = distance / 6371; //convert km to radians
 		// console.log(" After convert km to radians distance is : "+ _distance );
 		Parking.find({
 			$and: [{
 					'location.coords': {
 						$geoWithin: {
 							$centerSphere: [
-								[_lat, _lng], _distance
+								[lat, lng], distance
 							]
 						}
 					}
@@ -145,18 +153,15 @@ class Parkings {
 				}
 			]
 		}, function(err, optionalParkings) {
-			if (err) {
-				console.log("ERROR in find>> " + err);
-				throw err;
-			}
-			var optionalParkings = JSON.parse(JSON.stringify(optionalParkings));
-			for (var i = 0; i < optionalParkings.length; i++)
+			if (err) throw err;
+			optionalParkings = JSON.parse(JSON.stringify(optionalParkings));
+			for (i = 0; i < optionalParkings.length; i++)
 				optionalParkings[i].time = new Date(optionalParkings[i].time).toLocaleString();
-			var jsonRes = {
+			let jsonRes = {
 				bookingId: newBooking.id,
 				results: optionalParkings
 			};
-			console.log("in search res is :" + jsonRes.results.length);
+			console.log(`in search res is: ${jsonRes.results.length}`);
 			console.log(jsonRes.results[0]);
 			res.send(jsonRes);
 		});
@@ -285,7 +290,7 @@ class Parkings {
 				name:"success"
 			}
 			res.json(ans);
-			
+
 		});
 	}
 

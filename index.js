@@ -24,64 +24,12 @@ app.use(function(req, res, next) {
 	next();
 });
 
-// parkingsApi.addParking(req, res)
+/**NOTE: Example of 2 functions that has been migrated to MVC model**/
 app.post('/addNewParking', parkingsApi.addParking);
-// app.post('/addNewParking/', function(req, res) {
-// 	var _publisherId = req.body.publisherId;
-// 	var _time = req.body.time;
-// 	var _street = req.body.location.street;
-// 	var _number = req.body.location.number;
-// 	var _country = req.body.location.country;
-// 	var _city = req.body.location.city;
-// 	var _lat = req.body.location.lat;
-// 	var _lng = req.body.location.lng;
-// 	var _description = req.body.description;
-// 	var _img = req.body.img;
-// 	var _size = req.body.size;
-// 	var _handicapped = req.body.handicapped;
-// 	var _status = req.body.status;
-// 	parkingsApi.addParking(_publisherId, _time, _street, _number, _city, _country, _lat, _lng, _img, _description, _handicapped, _size, _status, res)
-// 	console.log("finish rout");
-// });
+app.post('/searchParking', parkingsApi.searchParking);
+/**End of Example **/
 
-app.post('/searchParking/', function(req, res) {
-	console.log("in search >> " + req.body);
-	var _time = req.body.time;
-	var _searcherId = req.body.searcherId;
-
-	var _distance = req.body.distance;
-	console.log("distance is :::::::::::::::::::: " + _distance)
-	console.log(_distance);
-	_distance = _distance.trim();
-	_distance = parseFloat(_distance.split(" ")[0]);
-
-	console.log("distance is after split: " + _distance)
-	console.log(_distance);
-
-	var _street = req.body.location.street;
-	var _number = req.body.location.number;
-	var _country = req.body.location.country;
-	var _city = req.body.location.city;
-	var _lat = req.body.location.lat;
-	var _lng = req.body.location.lng;
-	var _location = {
-		street: _street,
-		number: _number,
-		city: _city,
-		country: _country,
-		coords: [_lat, _lng]
-
-	};
-	if (_distance < 0) {
-		_distance = -1 * _distance;
-	}
-
-	console.log("in routing distance is : " + _distance);
-	parkingsApi.searchParking(_searcherId, _time, _location, _distance, res);
-	console.log("finish rout");
-});
-
-app.post('/chooseParking/', function(req, res) {
+app.post('/chooseParking', function(req, res) {
 
 	var searcher_id = req.body.searcherId;
 	var parking_id = req.body.parkingId;
@@ -91,7 +39,7 @@ app.post('/chooseParking/', function(req, res) {
 
 });
 
-app.post('/cancelParking/', function(req, res) {
+app.post('/cancelParking', function(req, res) {
 
 	var parking_id = req.body.parkingId;
 	var booking_id = req.body.bookingId;
@@ -100,7 +48,7 @@ app.post('/cancelParking/', function(req, res) {
 
 });
 
-app.post('/deleteParking/', function(req, res) {
+app.post('/deleteParking', function(req, res) {
 
 	var parking_id = req.body.parkingId;
 
@@ -109,7 +57,7 @@ app.post('/deleteParking/', function(req, res) {
 
 });
 
-app.post('/deleteBooking/', function(req, res) {
+app.post('/deleteBooking', function(req, res) {
 
 	var booking_id = req.body.bookingId;
 
@@ -118,7 +66,7 @@ app.post('/deleteBooking/', function(req, res) {
 
 });
 
-app.post('/historyBooking/', function(req, res) {
+app.post('/historyBooking', function(req, res) {
 
 	var user_id = req.body.userId;
 
@@ -127,7 +75,7 @@ app.post('/historyBooking/', function(req, res) {
 
 });
 
-app.post('/historyParking/', function(req, res) {
+app.post('/historyParking', function(req, res) {
 
 	var user_id = req.body.userId;
 
@@ -136,6 +84,7 @@ app.post('/historyParking/', function(req, res) {
 
 });
 
+/**user Module routs **/
 app.post('/createUser', userCtrl.createUser);
 app.post('/updateUser', userCtrl.updateUser);
 app.post('/readUser', userCtrl.readUser);
