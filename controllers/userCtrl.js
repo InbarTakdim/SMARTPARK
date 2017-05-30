@@ -21,7 +21,7 @@ exports.createUser = (req, res) => {
 };
 exports.readUser = (req, res) => {
 	user.findOne({
-		email: req.params.userId
+		email: req.body.email
 	}, {}, (err, obj) => {
 		if (err) throw err;
 		console.log(`${obj} has been found!`);
@@ -36,20 +36,20 @@ exports.updateUser = (req, res) => {
 		carId: req.body.carId
 	}
 	user.updateOne({
-		email: req.params.userId
+		email: req.body.email
 	}, {
 		userInfo
 	}, {
 		upsert: true
 	}, (err, obj) => {
 		if (err) throw err;
-		console.log(`userId ${req.params.userId} has been updated!`);
+		console.log(`userId ${req.body.email} has been updated!`);
 		res.json(obj);
 	});
 };
 exports.deleteUser = (req, res) => {
 	user.deleteOne({
-		email: req.params.userId
+		email: req.body.email
 	}, (err, obj) => {
 		if (err) throw err;
 		console.log(`${obj} has been deleted!`);

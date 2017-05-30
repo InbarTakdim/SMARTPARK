@@ -1,15 +1,14 @@
 'use strict';
-var ParkingsController = require('./controllers/parkingCtrl.js'),
-	userMDL = require('./controllers/userCtrl.js'),
-	db = require('./dbconf'),
-	parkingsApi = new ParkingsController(),
-	port = process.env.PORT || 8080,
-	express = require('express'),
-	bodyParser = require('body-parser'),
-	app = express(),
-	http = require('http'),
-	_ = require('lodash');
-
+var parkingCtrl	= require('./controllers/parkingCtrl.js'),
+	userCtrl  		= require('./controllers/userCtrl.js'),
+	db  			= require('./dbconf'),
+	express  		= require('express'),
+	bodyParser  	= require('body-parser'),
+	http  			= require('http'),
+	_ 	 			= require('lodash'), //NOTE: might not required.
+	parkingsApi 	= new parkingCtrl(),
+	port 			= process.env.PORT || 8080,
+	app 			= express();
 
 
 app.use(bodyParser.json());
@@ -25,39 +24,25 @@ app.use(function(req, res, next) {
 	next();
 });
 
-// app.all('*', function(req, res, next) {
-//   res.header('Access-Control-Allow-Origin', '*');
-//   res.header('Access-Control-Allow-Methods', 'PUT, GET, POST, DELETE, OPTIONS');
-//   res.header('Access-Control-Allow-Headers', 'Content-Type');
-//   next();
+// parkingsApi.addParking(req, res)
+app.post('/addNewParking', parkingsApi.addParking);
+// app.post('/addNewParking/', function(req, res) {
+// 	var _publisherId = req.body.publisherId;
+// 	var _time = req.body.time;
+// 	var _street = req.body.location.street;
+// 	var _number = req.body.location.number;
+// 	var _country = req.body.location.country;
+// 	var _city = req.body.location.city;
+// 	var _lat = req.body.location.lat;
+// 	var _lng = req.body.location.lng;
+// 	var _description = req.body.description;
+// 	var _img = req.body.img;
+// 	var _size = req.body.size;
+// 	var _handicapped = req.body.handicapped;
+// 	var _status = req.body.status;
+// 	parkingsApi.addParking(_publisherId, _time, _street, _number, _city, _country, _lat, _lng, _img, _description, _handicapped, _size, _status, res)
+// 	console.log("finish rout");
 // });
-
-// app.use(express.bodyParser());
-// app.use( bodyParser.json() );       // to support JSON-encoded bodies
-// app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
-//   extended: true
-// }));
-
-app.post('/addNewParking/', function(req, res) {
-	var _publisherId = req.body.publisherId;
-	var _time = req.body.time;
-	var _street = req.body.location.street;
-	var _number = req.body.location.number;
-	var _country = req.body.location.country;
-	var _city = req.body.location.city;
-	var _lat = req.body.location.lat;
-	var _lng = req.body.location.lng;
-	var _description = req.body.description;
-	var _img = req.body.img;
-	var _size = req.body.size;
-	var _handicapped = req.body.handicapped;
-	var _status = req.body.status;
-
-
-
-	parkingsApi.addParking(_publisherId, _time, _street, _number, _city, _country, _lat, _lng, _img, _description, _handicapped, _size, _status, res)
-	console.log("finish rout");
-});
 
 app.post('/searchParking/', function(req, res) {
 	console.log("in search >> " + req.body);
@@ -151,11 +136,11 @@ app.post('/historyParking/', function(req, res) {
 
 });
 
-app.post('/createuser', userMDL.createUser);
-app.post('/updateuser', userMDL.updateUser);
-app.get('/readUser/:userId', userMDL.readUser);
-app.get('/deleteUser/:userId', userMDL.deleteUser);
-app.get('/getAll', userMDL.getAll); //NOTE: just for testing DB
+app.post('/createUser', userCtrl.createUser);
+app.post('/updateUser', userCtrl.updateUser);
+app.post('/readUser', userCtrl.readUser);
+app.post('/deleteUser', userCtrl.deleteUser);
+app.get('/getAll', userCtrl.getAll); //NOTE: just for testing DB
 
 http.createServer(app).listen(port);
 console.log(`server is running on port ${port}...`);

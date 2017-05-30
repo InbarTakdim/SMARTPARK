@@ -25,44 +25,55 @@ class Parkings {
 		}
 		return true;
 	}
+	addParking(req, res) {
+		// addParking(_publisherId, _time, _street, _number, _city, _country, lat, lng, _img, _description, _handicapped, _size, _status, res) {
+		let publisherId 	= req.body.publisherId,
+			time 			= req.body.time,
+			street 			= req.body.location.street,
+			number 			= req.body.location.number,
+			country 		= req.body.location.country,
+			city 			= req.body.location.city,
+			lat 			= req.body.location.lat,
+			lng 			= req.body.location.lng,
+			description 	= req.body.description,
+			img				= req.body.img,
+			size 			= req.body.size,
+			handicapped 	= req.body.handicapped,
+			status 			= req.body.status;
 
-	addParking(_publisherId, _time, _street, _number, _city, _country, lat, lng, _img, _description, _handicapped, _size, _status, res) {
-		console.log(' >> addParking : ' + _time);
-		// _time='2017-02-12 12:50:00'
-		// console.log("after chenge "+ _time);
-		// _time validation :
-		var checkValidation = this.validation(lat, lng, _time);
+		console.log(`>> addParking : ${time}`);
+		let checkValidation = this.validation(lat, lng, time);
 		if (!checkValidation) {
-			console.log("validation error!!!!!!!!!!!!!");
+			console.log("validation error!");
 			return false;
 		}
-		var tmpDate = new Date(_time);
-		console.log("after date constrctur " + tmpDate);
-		var newParking = new Parking({
+		let tmpDate = new Date(time);
+		console.log(`after Date constructor ${tmpDate}`);
+		let newParking = {
 			id: shortId.generate(),
 			time: tmpDate,
-			status: _status,
+			status: status,
 			occupied: false, // no one want this yet
 			location: {
-				street: _street,
-				number: _number,
-				city: _city,
-				country: _country,
+				street: street,
+				number: number,
+				city: city,
+				country: country,
 				coords: [lat, lng]
 			},
-			handicapped: _handicapped,
-			description: _description,
-			img: _img,
-			size: _size,
-			publisherId: _publisherId
-		});
+			handicapped: handicapped,
+			description: description,
+			img: img,
+			size: size,
+			publisherId: publisherId
+		};
 
-		newParking.save(function(err, parking) {
+		Parking.save({newParking}, (err, parking) => {
 			if (err) {
-				console.log(" >>ERROR : " + err);
-				handleError(res, err);
+				console.log(`>>ERROR : ${err}`);
+				handleError(res, err); // NOTE: what this func does?
 			}
-			console.log(" new parking add >> " + +newParking.time);
+			console.log(`>>new parking added : ${newParking.time}`);
 			res.json(newParking);
 		});
 	}
