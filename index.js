@@ -1,12 +1,12 @@
 'use strict';
-var parkingCtrl	= require('./controllers/parkingCtrl.js'),
+var parkingCtrl		= require('./controllers/parkingCtrl.js'),
 	userCtrl  		= require('./controllers/userCtrl.js'),
 	db  			= require('./dbconf'),
 	express  		= require('express'),
 	bodyParser  	= require('body-parser'),
 	http  			= require('http'),
 	_ 	 			= require('lodash'), //NOTE: might not required.
-	parkingsApi 	= new parkingCtrl(),
+	// parkingsApi 	= new parkingCtrl(),
 	port 			= process.env.PORT || 8080,
 	app 			= express();
 
@@ -15,6 +15,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
 	extended: true
 }));
+
 //app.use('/', express.static('./public'));
 app.use(function(req, res, next) {
 	res.header("Access-Control-Allow-Origin", "*");
@@ -24,72 +25,41 @@ app.use(function(req, res, next) {
 	next();
 });
 
-/**NOTE: Example of 2 functions that has been migrated to MVC model**/
-app.post('/addNewParking', parkingsApi.addParking);
-app.post('/searchParking', parkingsApi.searchParking);
-/**End of Example **/
+// let before 	= d3.timeMinute.offset(new Date(time), -15),
+// 	after 	= d3.timeMinute.offset(new Date(time), +15);
 
-app.post('/chooseParking', function(req, res) {
+	// before.setMinutes(before.getMinutes() - 15);
+	// after.setMinutes(after.getMinutes() + 15);
 
-	var searcher_id = req.body.searcherId;
-	var parking_id = req.body.parkingId;
-	var booking_id = req.body.bookingId;
-	parkingsApi.chooseParking(parking_id, searcher_id, booking_id, res);
-	console.log("finish rout");
+/**Parking Module routs **/
+app.post('/addNewParking', parkingCtrl.addParking);
 
-});
+app.post('/searchParking', parkingCtrl.searchParking);
 
-app.post('/cancelParking', function(req, res) {
+app.post('/chooseParking', parkingCtrl.chooseParking);
 
-	var parking_id = req.body.parkingId;
-	var booking_id = req.body.bookingId;
-	parkingsApi.cancelChooseParking(parking_id, booking_id, res);
-	console.log("finish rout");
+app.post('/cancelParking', parkingCtrl.cancelParking);
 
-});
+app.post('/deleteParking', parkingCtrl.deleteParking);
 
-app.post('/deleteParking', function(req, res) {
+app.post('/deleteBooking', parkingCtrl.deleteBooking);
 
-	var parking_id = req.body.parkingId;
+app.post('/historyBooking', parkingCtrl.historyBooking);
 
-	parkingsApi.deleteParking(parking_id, res);
-	console.log("finish rout");
+app.post('/historyParking', parkingCtrl.historyBooking);
 
-});
-
-app.post('/deleteBooking', function(req, res) {
-
-	var booking_id = req.body.bookingId;
-
-	parkingsApi.deleteBooking(booking_id, res);
-	console.log("finish rout");
-
-});
-
-app.post('/historyBooking', function(req, res) {
-
-	var user_id = req.body.userId;
-
-	parkingsApi.historyBooking(user_id, res);
-	console.log("finish rout");
-
-});
-
-app.post('/historyParking', function(req, res) {
-
-	var user_id = req.body.userId;
-
-	parkingsApi.historyParking(user_id, res);
-	console.log("finish rout");
-
-});
-
-/**user Module routs **/
+/**User Module routs **/
 app.post('/createUser', userCtrl.createUser);
+
 app.post('/updateUser', userCtrl.updateUser);
+
 app.post('/readUser', userCtrl.readUser);
+
 app.post('/deleteUser', userCtrl.deleteUser);
+
 app.get('/getAll', userCtrl.getAll); //NOTE: just for testing DB
+
+// app.get('/sendPush', userCtrl.sendPush);
 
 http.createServer(app).listen(port);
 console.log(`server is running on port ${port}...`);

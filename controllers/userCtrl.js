@@ -1,7 +1,8 @@
 'use strict';
 //DB schema:
-var user = require('../models/user'),
+var user 	= require('../models/user'),
 	booking = require('../models/booking'),
+	request = require('request'),
 	parking = require('../models/parking');
 
 //Module functions:
@@ -35,7 +36,7 @@ exports.updateUser = (req, res) => {
 		// password: req.body.password,
 		carId: req.body.carId
 	}
-	user.updateOne({
+	user.collection.update({
 		email: req.body.email
 	}, {
 		userInfo
@@ -56,6 +57,36 @@ exports.deleteUser = (req, res) => {
 		res.json(obj);
 	});
 };
+exports.decPoint = (userId, points) => {
+	user.collection.update({
+		email: userId
+	}, {
+		$inc: {
+			smarties: (-points)
+		}
+	}, {
+		upsert: true
+	}, (err, obj) => {
+		if (err) throw err;
+		console.log(`userId: ${req.body.email} lost #${points} points!`);
+		res.json(obj);
+	});
+}
+exports.incPoint = (userId, points) => {
+	user.collection.update({
+		email: userId
+	}, {
+		$inc: {
+			smarties: points
+		}
+	}, {
+		upsert: true
+	}, (err, obj) => {
+		if (err) throw err;
+		console.log(`userId: ${req.body.email} gain #${points} points!`);
+		res.json(obj);
+	});
+}
 // NOTE: just for testing DB
 exports.getAll = (req, res) => {
 	user.find({}, (err, obj) => {

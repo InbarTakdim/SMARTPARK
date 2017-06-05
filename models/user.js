@@ -9,7 +9,7 @@ var user = new schema({
 		type: String,
 		requierd: true
 	},
-	// googleToken: String,
+	token: String,
 	password: String,
 	// img: String,
 	smarties: Number,
