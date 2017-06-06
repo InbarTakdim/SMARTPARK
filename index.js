@@ -32,7 +32,7 @@ app.use(function(req, res, next) {
 	// after.setMinutes(after.getMinutes() + 15);
 
 /**Parking Module routs **/
-app.post('/addNewParking', parkingCtrl.addParking);
+app.post('/addNewParking', parkingCtrl.addNewParking);
 
 app.post('/searchParking', parkingCtrl.searchParking);
 
@@ -46,7 +46,7 @@ app.post('/deleteBooking', parkingCtrl.deleteBooking);
 
 app.post('/historyBooking', parkingCtrl.historyBooking);
 
-app.post('/historyParking', parkingCtrl.historyBooking);
+app.post('/historyParking', parkingCtrl.historyParking);
 
 /**User Module routs **/
 app.post('/createUser', userCtrl.createUser);

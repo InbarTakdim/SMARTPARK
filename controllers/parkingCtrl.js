@@ -25,14 +25,7 @@ var toLocalDate = (date) => {
 	return formatedDate;
 };
 
-var validation = (lat, lng, time) => {
-	// var isValid = time.match(dateFormat); // NOTE: no needed anymore...
-	// console.log(`is valid >> ${isValid}`);
-	// if (!isValid) {
-	// 	console.log('Date validation error !!!');
-	// 	return false;
-	// }
-
+var validation = (lat, lng) => {
 	if (lat > 85 || lat < -85 || lng > 180 || lng < -180) {
 		console.log("point is not in valid range !!!");
 		return false;
@@ -40,9 +33,11 @@ var validation = (lat, lng, time) => {
 	return true;
 }
 
-exports.addParking = (req, res) => {
+exports.addNewParking = (req, res) => {
+	console.log(`Function: addNewParking start!`);
 	var publisherId 	= req.body.publisherId,
 		time 			= toLocalDate(req.body.time),
+		location		= req.body.location,
 		lat 			= req.body.location.lat,
 		lng 			= req.body.location.lng,
 		description 	= req.body.description,
@@ -51,28 +46,21 @@ exports.addParking = (req, res) => {
 		handicapped 	= req.body.handicapped,
 		status 			= req.body.status;
 
+	location.coords = [parseFloat(lat), parseFloat(lat)];
+
 	console.log(`>> addParking : ${time}`);
-	// console.log(this.validation(lat, lng, time));
-	var checkValidation = validation(lat, lng, time);
+	var checkValidation = validation(lat, lng);
 	if (!checkValidation) {
 		console.log("validation error!");
 		return false;
 	}
 
-	var tmpDate = new Date(time);
-	console.log(`after Date constructor ${tmpDate}`);
 	var newParking = {
 		id: shortId.generate(),
-		time: tmpDate,
+		time: new Date(time),
 		status: status,
 		occupied: false, // no one want this yet
-		location: {
-			street: street,
-			number: number,
-			city: city,
-			country: country,
-			coords: [lat, lng]
-		},
+		location: location,
 		handicapped: handicapped,
 		description: description,
 		img: img,
@@ -80,11 +68,10 @@ exports.addParking = (req, res) => {
 		publisherId: publisherId
 	};
 
-	parking.collection.save({
-		newParking
-	}, (err, parking) => {
-		if (err) return err;
-		res.json(newParking);
+	parking.collection.save(newParking, (err, writeResult) => {
+		if (err) throw err; //NOTE: writeResult.writeError
+		console.log(`New booking added >> ${writeResult}`);
+		res.json(newParking)
 	});
 }
 
@@ -92,20 +79,12 @@ exports.searchParking = (req, res) => {
 	var time 		= toLocalDate(req.body.time),
 		searcherId 	= req.body.searcherId,
 		distance 	= req.body.distance,
-		street 		= req.body.location.street,
-		number 		= req.body.location.number,
-		country 	= req.body.location.country,
-		city 		= req.body.location.city,
+		location	= req.body.location,
 		lat 		= req.body.location.lat,
 		lng 		= req.body.location.lng;
 
-	var location = {
-		street: street,
-		number: number,
-		city: city,
-		country: country,
-		coords: [parseFloat(lat), parseFloat(lat)]
-	};
+	location.coords = [parseFloat(lat), parseFloat(lat)];
+
 	// time :
 	console.log(`>>time is: ${time}`);
 	console.log(`>>distance is: ${distance}`);
@@ -115,12 +94,11 @@ exports.searchParking = (req, res) => {
 	if (distance < 0)
 		distance = Math.abs(distance);
 
-	// _time validation :
 	var start 	= d3.timeMinute.offset(new Date(time), -15),
-		end	= d3.timeMinute.offset(new Date(time), +15);
+		end		= d3.timeMinute.offset(new Date(time), +15);
 
 	distance = parseFloat(distance);
-	var checkValidation = validation(lat, lng, time);
+	var checkValidation = validation(lat, lng);
 	if (!checkValidation) {
 		console.log(">>validation error!");
 		return false;
@@ -181,9 +159,9 @@ exports.searchParking = (req, res) => {
 }
 
 exports.chooseParking = (req, res) => {
-	var searcherId = req.body.searcherId,
-		parkingId = req.body.parkingId,
-		bookingId = req.body.bookingId;
+	var searcherId 	= req.body.searcherId,
+		parkingId 	= req.body.parkingId,
+		bookingId 	= req.body.bookingId;
 
 	parking.collection.update({
 			'id': parkingId
@@ -275,7 +253,7 @@ exports.cancelParking = (req, res) => {
 
 exports.deleteParking = (req, res) => {
 	var parkingId = req.body.parkingId;
-	parking.collection.findOneAndRemove({
+	parking.findOneAndRemove({
 		'id': parkingId
 	}, function(err) {
 		if (err) {
@@ -295,7 +273,7 @@ exports.deleteParking = (req, res) => {
 
 exports.deleteBooking = (req, res) => {
 	var bookingId = req.body.bookingId;
-	booking.collection.findOneAndRemove({
+	booking.findOneAndRemove({
 		'id': bookingId
 	}, function(err) {
 		if (err) {
