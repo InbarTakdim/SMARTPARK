@@ -32,24 +32,29 @@ exports.createUser = (req, res) => {
 
 };
 exports.readUser = (req, res) => {
-	let userDetails = {};
+	let expression = {};
 	if (!req.params.userPass)
-		userDetails = {
+		expression = {
 			email: req.params.userId
 		};
 	else
-		userDetails = {
-			email: req.params.userId,
-			password: req.params.userPass
+		expression = {
+			$and: [
+				{ email: req.params.userId },
+				{ password: req.params.userPass }
+			]
 		}
-	user.findOne(userDetails, {}, (err, obj) => {
+	console.log(expression);
+	user.findOne(expression, (err, obj) => {
 		if (err) throw err;
-		if (!obj) {
+		if (obj == null) {
 			console.log(`${req.params.userId} not found!`);
 			res.json(false)
 		}
-		console.log(`${obj} has been found!`);
-		res.json(obj);
+		else{
+			console.log(`${obj} has been found!`);
+			res.json(obj);
+		}
 	});
 };
 exports.updateUser = (req, res) => {

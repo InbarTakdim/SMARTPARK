@@ -58,7 +58,7 @@ exports.addNewParking = (req, res) => {
 	// tmpDate = tmpDate.setHours(tmpDate.getHours()+tmpDate.getTimezoneOffset());
 	var newParking = {
 		id: shortId.generate(),
-		time: new Date(time+'Z'),
+		time: new Date(time),
 		status: status,
 		occupied: false, // no one want this yet
 		location: location,
@@ -152,12 +152,12 @@ exports.searchParking = (req, res) => {
 					}
 				}
 				,
-				// {
-				// 	'time': {'$gte': start, '$lt': end}
+				{
+					'time': {'$gte': +start, '$lt': +end}
 				// 	// 'time': {'$gte': new Date(start+'Z'), '$lt': new Date(end+'Z'},
 				// 	// NOTE: WORKS:{'$gte': new Date('Tue Jun 06 2017 01:50:00'+'Z'), '$lt': new Date('Tue Jun 06 2017 02:20:00'+'Z')},
-				// }
-				// ,
+				}
+				,
 				{
 					'occupied': false
 				}
