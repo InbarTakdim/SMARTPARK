@@ -68,8 +68,8 @@ exports.decPoint = (userId, points) => {
 		upsert: true
 	}, (err, obj) => {
 		if (err) throw err;
-		console.log(`userId: ${req.body.email} lost #${points} points!`);
-		res.json(obj);
+		console.log(`userId: ${userId} lost #${points} points!`);
+		// console.log(obj);
 	});
 }
 exports.incPoint = (userId, points) => {
@@ -83,8 +83,8 @@ exports.incPoint = (userId, points) => {
 		upsert: true
 	}, (err, obj) => {
 		if (err) throw err;
-		console.log(`userId: ${req.body.email} gain #${points} points!`);
-		res.json(obj);
+		console.log(`userId:  ${userId} gain #${points} points!`);
+		// console.log(obj);
 	});
 }
 // NOTE: just for testing DB
