@@ -6,7 +6,6 @@ var parkingCtrl		= require('./controllers/parkingCtrl.js'),
 	bodyParser  	= require('body-parser'),
 	http  			= require('http'),
 	_ 	 			= require('lodash'), //NOTE: might not required.
-	// parkingsApi 	= new parkingCtrl(),
 	port 			= process.env.PORT || 8080,
 	app 			= express();
 
@@ -24,12 +23,6 @@ app.use(function(req, res, next) {
 	res.set("Content-Type", "application/json");
 	next();
 });
-
-// let before 	= d3.timeMinute.offset(new Date(time), -15),
-// 	after 	= d3.timeMinute.offset(new Date(time), +15);
-
-	// before.setMinutes(before.getMinutes() - 15);
-	// after.setMinutes(after.getMinutes() + 15);
 
 /**Parking Module routs **/
 app.post('/addNewParking', parkingCtrl.addNewParking);
@@ -53,7 +46,7 @@ app.post('/createUser', userCtrl.createUser);
 
 app.post('/updateUser', userCtrl.updateUser);
 
-app.post('/readUser', userCtrl.readUser);
+app.get('/readUser/:userId/:userPass', userCtrl.readUser);
 
 app.post('/deleteUser', userCtrl.deleteUser);
 
