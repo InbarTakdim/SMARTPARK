@@ -230,7 +230,7 @@ exports.chooseParking = (req, res) => {
 
 
 exports.cancelParking = (req, res) => {
-	varparkingId = req.body.parkingId,
+	var parkingId = req.body.parkingId,
 		bookingId = req.body.bookingId;
 	parking.collection.update({
 			'id': parkingId
