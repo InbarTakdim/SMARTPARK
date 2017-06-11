@@ -21,7 +21,7 @@ var toLocalDate = (date) => {
 	console.log(`day: ${day}`);
 	console.log(`time: ${time}`);
 	console.log(`formated: ${formatedDate}`);
-
+	console.log(`${formatedDate.toString()}`)
 	return formatedDate;
 };
 
@@ -36,6 +36,7 @@ var validation = (lat, lng) => {
 exports.addNewParking = (req, res) => {
 	console.log(`Function: addNewParking start!`);
 	var publisherId 	= req.body.publisherId,
+		publisherToken 	= req.body.publisherToken,
 		time 			= toLocalDate(req.body.time),
 		location		= req.body.location,
 		lat 			= req.body.location.lat,
@@ -43,10 +44,22 @@ exports.addNewParking = (req, res) => {
 		description 	= req.body.description,
 		img 			= req.body.img,
 		size 			= req.body.size,
-		handicapped 	= req.body.handicapped,
-		status 			= req.body.status;
+		handicapped 	= req.body.handicapped;
 
-	location.coords = [parseFloat(lat), parseFloat(lat)];
+	console.log(`
+		${publisherId}
+		${publisherToken}
+		${time}
+		${location}
+		${lat}
+		${lng}
+		${description}
+		${img}
+		${size}
+		${handicapped}
+		${req.body}
+	`);
+	location.coords = [parseFloat(lat), parseFloat(lng)];
 
 	console.log(`>> addParking : ${time}`);
 	var checkValidation = validation(lat, lng);
@@ -56,17 +69,18 @@ exports.addNewParking = (req, res) => {
 	}
 	// var tmpDate = new Date(time);
 	// tmpDate = tmpDate.setHours(tmpDate.getHours()+tmpDate.getTimezoneOffset());
+
 	var newParking = {
 		id: shortId.generate(),
-		time: new Date(time),
-		status: status,
+		time: new Date(time.toString()),
 		occupied: false, // no one want this yet
 		location: location,
 		handicapped: handicapped,
 		description: description,
 		img: img,
 		size: size,
-		publisherId: publisherId
+		publisherId: publisherId,
+		publisherToken: publisherToken
 	};
 
 	parking.collection.save(newParking, (err, writeResult) => {
@@ -77,28 +91,24 @@ exports.addNewParking = (req, res) => {
 }
 
 exports.searchParking = (req, res) => {
-	var time 		= toLocalDate(req.body.time),//{
-		// d:'Mon May 01 2017 00:00:00 GMT+0300 (IDT)',
-		// t:'Thu Jan 01 1970 20:02:00 GMT+0200 (IST)'
-	// },
-
+	console.log(`Function: searchParking start!`);
+	var time 		= toLocalDate(req.body.time),
 		searcherId 	= req.body.searcherId,
-		distance 	= req.body.distance,//'10 km',
-		// location	= {
-		// 				city:"Tel Aviv-Yafo",
-		// 				country:"IL",
-		// 				lat:32.0855769,
-		// 				lng:34.7776921,
-		// 				number:"1",
-		// 				street:"Liberman St"
-		// 			},
+		distance 	= req.body.distance,
 		location	= req.body.location,
-		lat 		= req.body.location.lat,//'32.0855769',//
-		lng 		= req.body.location.lng;//'34.7776921'//
-
-	location.coords = [parseFloat(lat), parseFloat(lat)];
-	// time = toLocalDate(time);
-	// time :
+		lat 		= req.body.location.lat,
+		lng 		= req.body.location.lng;
+		console.log(`
+			${searcherId}
+			${distance}
+			${location}
+			${lat}
+			${lng}
+			${time}
+			${req.body}
+		`);
+	location.coords = [parseFloat(lat), parseFloat(lng)];
+	console.log(location.coords);
 	console.log(`>>time is: ${time}`);
 	console.log(`>>distance is: ${distance}`);
 	distance = distance.trim();
@@ -129,15 +139,6 @@ exports.searchParking = (req, res) => {
 
 	booking.collection.save(newBooking, (err, writeResult) => {
 		if (err) throw err; //NOTE: writeResult.writeError
-		// console.log(`New booking added >> ${writeResult}
-		// 	********************************
-		// 	${new Date('Tue Jun 06 2017 01:50:00')}
-		// 	${new Date(start)}
-		// 	${start.toISOString()}
-		// 	${start.toTimeString()}
-		// 	${start.toUTCString()}
-		// 	${start.valueOf()}
-		// 	${start.toLocaleString()}`);
 	});
 
 	distance = distance / 6371; //convert km to radians

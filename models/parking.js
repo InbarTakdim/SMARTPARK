@@ -24,7 +24,8 @@ var parkingSchema = new schema({
 	description: String,
 	img: String,
 	size: Number,
-	publisherId: String
+	publisherId: String,
+	publisherToken: String
 }, {
 	collection: 'parkings',
 	versionKey: false
