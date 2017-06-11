@@ -8,6 +8,7 @@ var parkingSchema = new schema({
 		required: true,
 		unique: true
 	},
+	postedOn: Date,
 	time: Date,
 	occupied: Boolean,
 	location: {

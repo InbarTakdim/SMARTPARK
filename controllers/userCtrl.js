@@ -32,20 +32,28 @@ exports.createUser = (req, res) => {
 
 };
 exports.readUser = (req, res) => {
-	let expression = {};
-	if (!req.params.userPass)
-		expression = {
-			email: req.params.userId
-		};
-	else
-		expression = {
-			$and: [
-				{ email: req.params.userId },
-				{ password: req.params.userPass }
-			]
-		}
-	console.log(expression);
-	user.findOne(expression, (err, obj) => {
+	// let expression = {};
+	// console.log(req.params.userPass);
+	// if (!req.params.userPass)
+	// 	expression = {
+	// 		email: req.params.userId
+	// 	};
+	// else
+	// let expression = {
+	// 		$and: [
+	// 			{ email: req.params.userId },
+	// 			{ password: req.params.userPass }
+	// 		]
+	// 	}
+	// console.log(expression);
+	console.log(req.params);
+	console.log(req.params.userId);
+	console.log(req.params.userPass);
+	user.findOne({
+		email: req.params.userId,
+		password: req.params.userPass	
+	}, (err, obj) => {
+		console.log(obj);
 		if (err) throw err;
 		if (obj == null) {
 			console.log(`${req.params.userId} not found!`);
@@ -57,6 +65,7 @@ exports.readUser = (req, res) => {
 		}
 	});
 };
+
 exports.updateUser = (req, res) => {
 	let userInfo = {
 		name: req.body.name,
@@ -85,22 +94,8 @@ exports.deleteUser = (req, res) => {
 		res.json(obj);
 	});
 };
-exports.decPoint = (userId, points) => {
-	user.collection.update({
-		email: userId
-	}, {
-		$inc: {
-			smarties: (-points)
-		}
-	}, {
-		upsert: true
-	}, (err, obj) => {
-		if (err) throw err;
-		console.log(`userId: ${userId} lost #${points} points!`);
-		// console.log(obj);
-	});
-}
-exports.incPoint = (userId, points) => {
+
+exports.incPoints = (userId, points) => {
 	user.collection.update({
 		email: userId
 	}, {
@@ -111,7 +106,7 @@ exports.incPoint = (userId, points) => {
 		upsert: true
 	}, (err, obj) => {
 		if (err) throw err;
-		console.log(`userId:  ${userId} gain #${points} points!`);
+		console.log(`userId:  ${userId} gain/lost #${points} points!`);
 		// console.log(obj);
 	});
 }

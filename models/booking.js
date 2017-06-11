@@ -8,6 +8,7 @@ var bookingSchema = new schema({
 		required: true,
 		unique: true
 	},
+	postedOn: Date,
 	time: Date,
 	distance: Number,
 	location: {

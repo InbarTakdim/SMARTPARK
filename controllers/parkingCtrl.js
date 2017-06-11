@@ -1,29 +1,11 @@
 'use strict';
-var mongoose 	= require('mongoose'),
-	parking 	= require('../models/parking'),
-	booking 	= require('../models/booking'),
-	userCtrl 	= require('./userCtrl'),
-	shortId 	= require('shortid'),
-	_ 			= require('lodash'),
-	d3 			= require('d3');
-// dateFormat 	= /(19|20)\d\d-([1-9]|1[012])-(0[1-9]|[1-9]|1[0-9]|2[0-9]|3[01]) (0[1-9]|[0-9]|[1]\d|2[0-3]):([0-5]\d):([0-5]\d)$/,
-// location 	= require('../models/location');
-
-// var formatDay 	= d3.timeFormat("%Y-%m-%d"),
-// 	formatTime 	= d3.timeFormat("%H:%M"),
-// 	formatDate 	= d3.timeFormat("%Y-%m-%d %H:%M:00");
-//
-// var toLocalDate = (date) => {
-// 	var day 			= formatDay(new Date(date.d)),
-// 		time 			= formatTime(new Date(date.t)),
-// 	 	formatedDate 	= formatDate(new Date(`${day} ${time}`));
-//
-// 	console.log(`day: ${day}`);
-// 	console.log(`time: ${time}`);
-// 	console.log(`formated: ${formatedDate}`);
-// 	console.log(`${formatedDate.toString()}`)
-// 	return formatedDate.toString();
-// };
+var mongoose = require('mongoose'),
+	parking = require('../models/parking'),
+	booking = require('../models/booking'),
+	userCtrl = require('./userCtrl'),
+	shortId = require('shortid'),
+	_ = require('lodash'),
+	d3 = require('d3');
 
 var validation = (lat, lng) => {
 	if (lat > 85 || lat < -85 || lng > 180 || lng < -180) {
@@ -38,8 +20,8 @@ exports.addNewParking = (req, res) => {
 	console.log(`Oiginal Time is: ${req.body.time}`);
 	var publisherId 	= req.body.publisherId,
 		publisherToken 	= req.body.publisherToken,
-		time 			= req.body.time,//toLocalDate(req.body.time),
-		location		= req.body.location,
+		time 			= req.body.time,
+		location 		= req.body.location,
 		lat 			= req.body.location.lat,
 		lng 			= req.body.location.lng,
 		description 	= req.body.description,
@@ -68,13 +50,12 @@ exports.addNewParking = (req, res) => {
 		console.log("validation error!");
 		return false;
 	}
-	// var tmpDate = new Date(time);
-	// tmpDate = tmpDate.setHours(tmpDate.getHours()+tmpDate.getTimezoneOffset());
 
 	var newParking = {
 		id: shortId.generate(),
+		postedOn: new Date(), //NOTE: for user's history
 		time: new Date(time),
-		occupied: false, // no one want this yet
+		occupied: false,
 		location: location,
 		handicapped: handicapped,
 		description: description,
@@ -93,21 +74,13 @@ exports.addNewParking = (req, res) => {
 
 exports.searchParking = (req, res) => {
 	console.log(`Function: searchParking start!`);
-	var time 		= req.body.time,//toLocalDate(req.body.time),
+	var time 		= req.body.time,
 		searcherId 	= req.body.searcherId,
 		distance 	= req.body.distance,
-		location	= req.body.location,
+		location 	= req.body.location,
 		lat 		= req.body.location.lat,
 		lng 		= req.body.location.lng;
-		console.log(`
-			${searcherId}
-			${distance}
-			${location}
-			${lat}
-			${lng}
-			${time}
-			${req.body}
-		`);
+
 	location.coords = [parseFloat(lat), parseFloat(lng)];
 	console.log(location.coords);
 	console.log(`>>time is: ${time}`);
@@ -119,7 +92,7 @@ exports.searchParking = (req, res) => {
 		distance = Math.abs(distance);
 
 	var start 	= d3.timeMinute.offset(new Date(time), -15),
-		end		= d3.timeMinute.offset(new Date(time), +15);
+		end 	= d3.timeMinute.offset(new Date(time), +15);
 
 	distance = parseFloat(distance);
 	var checkValidation = validation(lat, lng);
@@ -131,7 +104,8 @@ exports.searchParking = (req, res) => {
 	//save booking:
 	var newBooking = {
 		id: shortId.generate(),
-		// timeCreated: new Date(),
+		postedOn: new Date(),
+		time: new Date(time),
 		distance: distance,
 		location: location,
 		searcherId: searcherId,
@@ -145,21 +119,21 @@ exports.searchParking = (req, res) => {
 	distance = distance / 6371; //convert km to radians
 
 	parking.find({
-			$and: [
-				{
+			$and: [{
 					'location.coords': {
 						$geoWithin: {
-							$centerSphere: [[lat, lng], distance]
+							$centerSphere: [
+								[lat, lng], distance
+							]
 						}
 					}
-				}
-				,
+				},
 				{
-					'time': {'$gte': +start, '$lt': +end}
-				// 	// 'time': {'$gte': new Date(start+'Z'), '$lt': new Date(end+'Z'},
-				// 	// NOTE: WORKS:{'$gte': new Date('Tue Jun 06 2017 01:50:00'+'Z'), '$lt': new Date('Tue Jun 06 2017 02:20:00'+'Z')},
-				}
-				,
+					'time': {
+						'$gte': +start,
+						'$lt': +end
+					}
+				},
 				{
 					'occupied': false
 				}
@@ -168,8 +142,8 @@ exports.searchParking = (req, res) => {
 		function(err, optionalParkings) {
 			if (err) return err;
 			optionalParkings = JSON.parse(JSON.stringify(optionalParkings));
-			if(optionalParkings.length)
-				userCtrl.decPoint(searcherId, 1); //NOTE: points by default equals 1 //need to check if user has points
+			if (optionalParkings.length)
+				userCtrl.incPoints(searcherId, -1); //NOTE: points by default equals 1 //need to check if user has points
 
 			for (var i = 0; i < optionalParkings.length; i++)
 				optionalParkings[i].time = new Date(optionalParkings[i].time).toLocaleString();
@@ -184,9 +158,9 @@ exports.searchParking = (req, res) => {
 }
 
 exports.chooseParking = (req, res) => {
-	var searcherId 	= req.body.searcherId,
-		parkingId 	= req.body.parkingId,
-		bookingId 	= req.body.bookingId;
+	var searcherId = req.body.searcherId,
+		parkingId = req.body.parkingId,
+		bookingId = req.body.bookingId;
 
 	parking.collection.update({
 			'id': parkingId
