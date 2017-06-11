@@ -32,26 +32,11 @@ exports.createUser = (req, res) => {
 
 };
 exports.readUser = (req, res) => {
-	// let expression = {};
-	// console.log(req.params.userPass);
-	// if (!req.params.userPass)
-	// 	expression = {
-	// 		email: req.params.userId
-	// 	};
-	// else
-	// let expression = {
-	// 		$and: [
-	// 			{ email: req.params.userId },
-	// 			{ password: req.params.userPass }
-	// 		]
-	// 	}
-	// console.log(expression);
-	console.log(req.params);
 	console.log(req.params.userId);
 	console.log(req.params.userPass);
 	user.findOne({
 		email: req.params.userId,
-		password: req.params.userPass	
+		password: req.params.userPass
 	}, (err, obj) => {
 		console.log(obj);
 		if (err) throw err;
