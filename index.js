@@ -6,7 +6,7 @@ var parkingCtrl		= require('./controllers/parkingCtrl.js'),
 	bodyParser  	= require('body-parser'),
 	http  			= require('http'),
 	_ 	 			= require('lodash'), //NOTE: might not required.
-	port 			= process.env.PORT || 8080,
+	port 			= process.env.PORT || 8000,
 	app 			= express();
 
 

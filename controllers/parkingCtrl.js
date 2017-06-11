@@ -9,21 +9,21 @@ var mongoose 	= require('mongoose'),
 // dateFormat 	= /(19|20)\d\d-([1-9]|1[012])-(0[1-9]|[1-9]|1[0-9]|2[0-9]|3[01]) (0[1-9]|[0-9]|[1]\d|2[0-3]):([0-5]\d):([0-5]\d)$/,
 // location 	= require('../models/location');
 
-var formatDay 	= d3.timeFormat("%Y-%m-%d"),
-	formatTime 	= d3.timeFormat("%H:%M"),
-	formatDate 	= d3.timeFormat("%Y-%m-%d %H:%M:00");
-
-var toLocalDate = (date) => {
-	var day 			= formatDay(new Date(date.d)),
-		time 			= formatTime(new Date(date.t)),
-	 	formatedDate 	= formatDate(new Date(`${day} ${time}`));
-
-	console.log(`day: ${day}`);
-	console.log(`time: ${time}`);
-	console.log(`formated: ${formatedDate}`);
-	console.log(`${formatedDate.toString()}`)
-	return formatedDate;
-};
+// var formatDay 	= d3.timeFormat("%Y-%m-%d"),
+// 	formatTime 	= d3.timeFormat("%H:%M"),
+// 	formatDate 	= d3.timeFormat("%Y-%m-%d %H:%M:00");
+//
+// var toLocalDate = (date) => {
+// 	var day 			= formatDay(new Date(date.d)),
+// 		time 			= formatTime(new Date(date.t)),
+// 	 	formatedDate 	= formatDate(new Date(`${day} ${time}`));
+//
+// 	console.log(`day: ${day}`);
+// 	console.log(`time: ${time}`);
+// 	console.log(`formated: ${formatedDate}`);
+// 	console.log(`${formatedDate.toString()}`)
+// 	return formatedDate.toString();
+// };
 
 var validation = (lat, lng) => {
 	if (lat > 85 || lat < -85 || lng > 180 || lng < -180) {
@@ -35,9 +35,10 @@ var validation = (lat, lng) => {
 
 exports.addNewParking = (req, res) => {
 	console.log(`Function: addNewParking start!`);
+	console.log(`Oiginal Time is: ${req.body.time}`);
 	var publisherId 	= req.body.publisherId,
 		publisherToken 	= req.body.publisherToken,
-		time 			= toLocalDate(req.body.time),
+		time 			= req.body.time,//toLocalDate(req.body.time),
 		location		= req.body.location,
 		lat 			= req.body.location.lat,
 		lng 			= req.body.location.lng,
@@ -72,7 +73,7 @@ exports.addNewParking = (req, res) => {
 
 	var newParking = {
 		id: shortId.generate(),
-		time: new Date(time.toString()),
+		time: new Date(time),
 		occupied: false, // no one want this yet
 		location: location,
 		handicapped: handicapped,
@@ -92,7 +93,7 @@ exports.addNewParking = (req, res) => {
 
 exports.searchParking = (req, res) => {
 	console.log(`Function: searchParking start!`);
-	var time 		= toLocalDate(req.body.time),
+	var time 		= req.body.time,//toLocalDate(req.body.time),
 		searcherId 	= req.body.searcherId,
 		distance 	= req.body.distance,
 		location	= req.body.location,
@@ -130,7 +131,7 @@ exports.searchParking = (req, res) => {
 	//save booking:
 	var newBooking = {
 		id: shortId.generate(),
-		timeCreated: new Date(),
+		// timeCreated: new Date(),
 		distance: distance,
 		location: location,
 		searcherId: searcherId,
