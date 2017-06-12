@@ -5,7 +5,7 @@ var user = require('../models/user'),
 	request = require('request'),
 	parking = require('../models/parking');
 
-//Module functions:
+//Module functions: //NOTE: needed to be change to db.collection.findAndModify()
 exports.createUser = (req, res) => {
 	console.log(req.body.email);
 	user.find({email: req.body.email}, (err, item) => {
@@ -93,6 +93,7 @@ exports.incPoints = (userId, points) => {
 		if (err) throw err;
 		console.log(`userId:  ${userId} gain/lost #${points} points!`);
 		// console.log(obj);
+		res.json(obj);
 	});
 }
 // NOTE: just for testing DB

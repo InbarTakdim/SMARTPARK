@@ -5,7 +5,7 @@ var parkingCtrl		= require('./controllers/parkingCtrl.js'),
 	express  		= require('express'),
 	bodyParser  	= require('body-parser'),
 	http  			= require('http'),
-	_ 	 			= require('lodash'), //NOTE: might not required.
+	// _ 	 			= require('lodash'), //NOTE: might not required.
 	port 			= process.env.PORT || 8000,
 	app 			= express();
 
@@ -41,6 +41,8 @@ app.post('/historyBooking', parkingCtrl.historyBooking);
 
 app.post('/historyParking', parkingCtrl.historyParking);
 
+app.get('/setParking/:parkingId/:set', parkingCtrl.setParking);
+
 /**User Module routs **/
 app.post('/createUser', userCtrl.createUser);
 
@@ -48,11 +50,12 @@ app.post('/updateUser', userCtrl.updateUser);
 
 app.get('/readUser/:userId/:userPass', userCtrl.readUser);
 
+app.get('/incPoints/:userId/:points', userCtrl.incPoints);
+
 app.post('/deleteUser', userCtrl.deleteUser);
 
 app.get('/getAll', userCtrl.getAll); //NOTE: just for testing DB
 
-// app.get('/sendPush', userCtrl.sendPush);
 
 http.createServer(app).listen(port);
 console.log(`server is running on port ${port}...`);

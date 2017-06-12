@@ -18,16 +18,17 @@ var validation = (lat, lng) => {
 exports.addNewParking = (req, res) => {
 	console.log(`Function: addNewParking start!`);
 	console.log(`Oiginal Time is: ${req.body.time}`);
-	var publisherId 	= req.body.publisherId,
-		publisherToken 	= req.body.publisherToken,
-		time 			= req.body.time,
-		location 		= req.body.location,
-		lat 			= req.body.location.lat,
-		lng 			= req.body.location.lng,
-		description 	= req.body.description,
-		img 			= req.body.img,
-		size 			= req.body.size,
-		handicapped 	= req.body.handicapped;
+	var publisherId = req.body.publisherId,
+		publisherToken = req.body.publisherToken,
+		time = req.body.time,
+		location = req.body.location,
+		lat = req.body.location.lat,
+		lng = req.body.location.lng,
+		description = req.body.description,
+		img = req.body.img,
+		size = req.body.size,
+		handicapped = req.body.handicapped,
+		currentCar = req.body.currentCar;
 
 	console.log(`
 		${publisherId}
@@ -62,7 +63,8 @@ exports.addNewParking = (req, res) => {
 		img: img,
 		size: size,
 		publisherId: publisherId,
-		publisherToken: publisherToken
+		publisherToken: publisherToken,
+		currentCar: currentCar
 	};
 
 	parking.collection.save(newParking, (err, writeResult) => {
@@ -74,12 +76,12 @@ exports.addNewParking = (req, res) => {
 
 exports.searchParking = (req, res) => {
 	console.log(`Function: searchParking start!`);
-	var time 		= req.body.time,
-		searcherId 	= req.body.searcherId,
-		distance 	= req.body.distance,
-		location 	= req.body.location,
-		lat 		= req.body.location.lat,
-		lng 		= req.body.location.lng;
+	var time = req.body.time,
+		searcherId = req.body.searcherId,
+		distance = req.body.distance,
+		location = req.body.location,
+		lat = req.body.location.lat,
+		lng = req.body.location.lng;
 
 	location.coords = [parseFloat(lat), parseFloat(lng)];
 	console.log(location.coords);
@@ -91,8 +93,8 @@ exports.searchParking = (req, res) => {
 	if (distance < 0)
 		distance = Math.abs(distance);
 
-	var start 	= d3.timeMinute.offset(new Date(time), -15),
-		end 	= d3.timeMinute.offset(new Date(time), +15);
+	var start = d3.timeMinute.offset(new Date(time), -15),
+		end = d3.timeMinute.offset(new Date(time), +15);
 
 	distance = parseFloat(distance);
 	var checkValidation = validation(lat, lng);
@@ -119,42 +121,42 @@ exports.searchParking = (req, res) => {
 	distance = distance / 6371; //convert km to radians
 
 	parking.find({
-			$and: [{
-					'location.coords': {
-						$geoWithin: {
-							$centerSphere: [
-								[lat, lng], distance
-							]
-						}
+		$and: [{
+				'location.coords': {
+					$geoWithin: {
+						$centerSphere: [
+							[lat, lng], distance
+						]
 					}
-				},
-				{
-					'time': {
-						'$gte': +start,
-						'$lt': +end
-					}
-				},
-				{
-					'occupied': false
 				}
-			]
-		},
-		function(err, optionalParkings) {
-			if (err) return err;
-			optionalParkings = JSON.parse(JSON.stringify(optionalParkings));
-			if (optionalParkings.length)
-				userCtrl.incPoints(searcherId, -1); //NOTE: points by default equals 1 //need to check if user has points
+			},
+			{
+				'time': {
+					'$gte': +start,
+					'$lt': +end
+				}
+			},
+			{
+				'occupied': false
+			}
+		]
+	},
+	function(err, optionalParkings) {
+		if (err) return err;
+		optionalParkings = JSON.parse(JSON.stringify(optionalParkings));
+		if (optionalParkings.length)
+			userCtrl.incPoints(searcherId, -1); //NOTE: points by default equals 1 //need to check if user has points
 
-			for (var i = 0; i < optionalParkings.length; i++)
-				optionalParkings[i].time = new Date(optionalParkings[i].time).toLocaleString();
-			var jsonRes = {
-				bookingId: newBooking.id,
-				results: optionalParkings
-			};
-			console.log(`in search res is: ${jsonRes.results.length}`);
-			console.log(jsonRes.results);
-			res.send(jsonRes);
-		});
+		for (var i = 0; i < optionalParkings.length; i++)
+			optionalParkings[i].time = new Date(optionalParkings[i].time).toLocaleString();
+		var jsonRes = {
+			bookingId: newBooking.id,
+			results: optionalParkings
+		};
+		console.log(`in search res is: ${jsonRes.results.length}`);
+		console.log(jsonRes.results);
+		res.send(jsonRes);
+	});
 }
 
 exports.chooseParking = (req, res) => {
@@ -204,6 +206,19 @@ exports.chooseParking = (req, res) => {
 	);
 }
 
+exports.setParking = (req, res) => {
+	var set 	= req.params.set,
+	parkingId 	= req.params.parkingId;
+	parking.findAndModify({
+		query: { id: parkingId },
+		update: { occupied: set },
+		upsert: true
+	},(err, obj) => {
+		if (err) throw err;
+		console.log(obj);
+		res.send(obj);
+	});
+}
 
 exports.cancelParking = (req, res) => {
 	var parkingId = req.body.parkingId,
@@ -292,22 +307,24 @@ exports.deleteBooking = (req, res) => {
 
 exports.historyBooking = (req, res) => {
 	var userId = req.body.userId;
-	booking.find({
-		'searcherId': userId
-	}).sort('-time').exec(function(err, docs) {
-		if (err) res.send("error");
-		else res.send(docs)
+	booking
+	.find({'searcherId': userId})
+	.sort('-time')
+	.exec(function(err, docs) {
+		if (err) throw err;
+		res.send(docs);
 	});
 
 }
 
 exports.historyParking = (req, res) => {
 	var userId = req.body.userId;
-	parking.find({
-		'publisherId': userId
-	}).sort('-time').exec(function(err, docs) {
-		if (err) res.send("error");
-		else res.send(docs)
+	parking
+	.find({'publisherId': userId})
+	.sort('-time')
+	.exec(function(err, docs) {
+		if (err) throw err;
+		res.send(docs);
 	});
 
 }
