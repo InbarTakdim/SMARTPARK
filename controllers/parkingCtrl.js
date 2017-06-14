@@ -145,7 +145,7 @@ exports.searchParking = (req, res) => {
 		if (err) return err;
 		optionalParkings = JSON.parse(JSON.stringify(optionalParkings));
 		if (optionalParkings.length)
-			userCtrl.incPoints(searcherId, -1); //NOTE: points by default equals 1 //need to check if user has points
+			userCtrl.updatePoints(searcherId, -1); //NOTE: points by default equals 1 //need to check if user has points
 
 		for (var i = 0; i < optionalParkings.length; i++)
 			optionalParkings[i].time = new Date(optionalParkings[i].time).toLocaleString();
