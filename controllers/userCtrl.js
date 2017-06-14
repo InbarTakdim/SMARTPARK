@@ -79,8 +79,7 @@ exports.deleteUser = (req, res) => {
 		res.json(obj);
 	});
 };
-
-exports.incPoints = (userId, points) => {
+exports.updatePoints = (userId, points) => {
 	user.collection.update({
 		email: userId
 	}, {
@@ -90,11 +89,14 @@ exports.incPoints = (userId, points) => {
 	}, {
 		upsert: true
 	}, (err, obj) => {
-		if (err) throw err;
+		if (err) return err;
 		console.log(`userId:  ${userId} gain/lost #${points} points!`);
 		// console.log(obj);
-		res.json(obj);
+		return(obj);
 	});
+}
+exports.incPoints = (req, res) => {
+	res.json(updatePoints(req.params.userId, req.params.points));
 }
 // NOTE: just for testing DB
 exports.getAll = (req, res) => {
