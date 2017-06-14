@@ -79,7 +79,25 @@ exports.deleteUser = (req, res) => {
 		res.json(obj);
 	});
 };
-exports.updatePoints = (userId, points) => {
+exports.updatePoints = (userId, points, callback) => {
+	user.collection.update({
+		email: userId
+	}, {
+		$inc: {
+			smarties: points
+		}
+	}, {
+		upsert: true
+	}, (err, obj) => {
+		if (err) callback(err) ;
+		console.log(`userId:  ${userId} gain/lost #${points} points!`);
+		// console.log(obj);
+		callback(obj);
+	});
+}
+exports.incPoints = (req, res) => {
+	let userId = req.params.userId,
+		points = req.params.points;
 	user.collection.update({
 		email: userId
 	}, {
@@ -92,12 +110,18 @@ exports.updatePoints = (userId, points) => {
 		if (err) return err;
 		console.log(`userId:  ${userId} gain/lost #${points} points!`);
 		// console.log(obj);
-		return(obj);
+		res.json(obj);
 	});
+	// res.json(this.updatePoints(req.params.userId, req.params.points));
 }
-exports.incPoints = (req, res) => {
-	res.json(updatePoints(req.params.userId, req.params.points));
-}
+
+// const Service = {
+//   foo: (a, b) => a + b,
+//   bar: (a, b) => Service.foo(a, b) * b
+// }
+//
+// module.exports = Service
+
 // NOTE: just for testing DB
 exports.getAll = (req, res) => {
 	user.find({}, (err, obj) => {
