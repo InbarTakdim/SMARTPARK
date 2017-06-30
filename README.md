@@ -1,54 +1,48 @@
-# smart park server
+![SMARTPARK](./LOGODAVID3-0.png) 
+# SMARTPARK - Server 
+###### Final CSE Project 
+
+### REST API
+* REPORT:
+
+*path:* https://smartserver1.herokuapp.com/addNewParking/
+
+**you must pass in body request params**
+
+1. reporter_id - number
+
+2. time- string in format: yyyy-mm-dd%20hh:mm:ss
+
+3. street- string
+
+4. number- number
+
+5. city- string
+
+6. lat- number
+
+7. lng- number
+
+8. img- string
+
+9. description- string
+
+* SEARCH:
+
+*path:* https://smartserver1.herokuapp.com/searchParking/
+
+**you must pass in body request params:**
+
+1. time- string in format: yyyy-mm-dd%20hh:mm:ss
+
+2. lat- number
+
+3. lng- number
+
+4. diff- number
 
 
-## report:
-
-path :
-
-https://smartserver1.herokuapp.com/addNewParking/
-
-
-#### you must pass in body request params:
-
-
-reporter_id - number
-
-time- string in format: yyyy-mm-dd%20hh:mm:ss
-
-street- string
-
-number- number
-
-city- string
-
-lat- number
-
-lng- number
-
-img- string
-
-description- string
-
-## search:
-
-path :
-
-https://smartserver1.herokuapp.com/searchParking/
-
-
-#### you must pass in body request params:
-
-
-time- string in format: yyyy-mm-dd%20hh:mm:ss
-
-lat- number
-
-lng- number
-
-diff- number
-
-
-## marks:
+* MARK:
 
 
 1. time strcture : yyyy-mm-dd%20hh:mm:ss
