@@ -1,4 +1,4 @@
-![SMARTPARK](./LOGODAVID3-0.png) 
+![SMARTPARK](./assets/LOGODAVID3-0.png) 
 # SMARTPARK - Server 
 ###### Final CSE Project 
 
