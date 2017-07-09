@@ -4,7 +4,7 @@ var mongoose = require('mongoose'),
     booking = require('../models/booking'),
     userCtrl = require('./userCtrl'),
     shortId = require('shortid'),
-    _ = require('lodash'),
+    // _ = require('lodash'),
     d3 = require('d3');
 
 var validation = (lat, lng) => {
@@ -81,25 +81,14 @@ exports.searchParking = (req, res) => {
         distance = req.body.distance,
         location = req.body.location,
         lat = req.body.location.lat,
-        lng = req.body.location.lng;
-    var size;
-        if(typeof req.body.size != null){
-            console.log('size defined!!!');
-            size = req.body.size;
-            size= parseInt(size);
-            size--; //for getting equal
-            console.log('size '+ size);
+        lng = req.body.location.lng,
+    	size = req.body.size;
 
-        }
-        else{
-            size=0;
-            console.log("size is zero");
-        }
-        
 
     location.coords = [parseFloat(lat), parseFloat(lng)];
     console.log(location.coords);
     console.log(`>>time is: ${time}`);
+	console.log(`>>size is: ${size}`);
     console.log(`>>distance is: ${distance}`);
     distance = distance.trim();
     distance = parseFloat(distance.split(" ")[0]);
@@ -125,6 +114,7 @@ exports.searchParking = (req, res) => {
         distance: distance,
         location: location,
         searcherId: searcherId,
+		size: size,
         parkingId: null //null
     };
 
@@ -133,9 +123,10 @@ exports.searchParking = (req, res) => {
     });
 
     distance = distance / 6371; //convert km to radians
-
+	console.log(`${start} , ${end}`);
     parking.find({
-        $and: [{
+        $and: [
+			{
                 'location.coords': {
                     $geoWithin: {
                         $centerSphere: [
@@ -152,9 +143,10 @@ exports.searchParking = (req, res) => {
             },
             {
                 'occupied': false
-            },{
+            }
+			,{
                 'size':{
-                    '$gte':+size 
+                    '$gte': size
                 }
             }
         ]

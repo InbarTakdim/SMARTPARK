@@ -21,6 +21,7 @@ var bookingSchema = new schema({
 			index: '2d'
 		}
 	},
+	size: Number,
 	searcherId: String,
 	parkingId: String
 }, {
