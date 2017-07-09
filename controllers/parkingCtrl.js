@@ -86,7 +86,7 @@ exports.searchParking = (req, res) => {
         if(typeof req.body.size != null){
             console.log('size defined!!!');
             size = req.body.size;
-            size= parseNumber(size);
+            size= parseInt(size);
             size--; //for getting equal
             console.log('size '+ size);
 
