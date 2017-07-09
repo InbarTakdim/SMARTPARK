@@ -82,14 +82,18 @@ exports.searchParking = (req, res) => {
         location = req.body.location,
         lat = req.body.location.lat,
         lng = req.body.location.lng;
-        var size;
+    var size;
         if(typeof req.body.size != null){
-            size = lng = req.body.size;
+            console.log('size defined!!!');
+            size = req.body.size;
             size= parseNumber(size);
             size--; //for getting equal
+            console.log('size '+ size);
+
         }
         else{
             size=0;
+            console.log("size is zero");
         }
         
 
